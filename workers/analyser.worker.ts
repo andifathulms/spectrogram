@@ -18,6 +18,9 @@
 import { createFramer, type Framer } from '../lib/dsp/framer'
 import { createSpectrumAnalyser, hopFor, hopSeconds, type SpectrumAnalyser } from '../lib/dsp/spectrum'
 import { DspError } from '../lib/dsp/errors'
+import { binCount, fft, ifft } from '../lib/dsp/fft'
+import { amplitudeSpectrum, energy } from '../lib/dsp/magnitude'
+import { coherentGain, windowFor, type WindowKind } from '../lib/dsp/windows'
 import type { AnalyserRequest, AnalyserResponse, AnalysisConfig, AnalysisInfo } from '../lib/audio/protocol'
 
 /** Columns held before a batch is posted. Keeps message rate near frame rate. */
@@ -131,6 +134,55 @@ function configure(config: AnalysisConfig): void {
   post({ type: 'ready', info })
 }
 
+/**
+ * Synthesis mode's one-shot path. Independent of the streaming configuration
+ * because N here is the length of the signal the user built, not the plate's
+ * window size — and it allocates, which is fine: this runs on a control
+ * change, not on a frame.
+ */
+function inspect(id: number, samples: Float32Array, kind: WindowKind, fs: number): void {
+  const N = samples.length
+  const coefficients = windowFor(kind, N)
+  const gain = coherentGain(coefficients)
+
+  const re = new Float64Array(N)
+  const im = new Float64Array(N)
+  for (let n = 0; n < N; n++) re[n] = samples[n] * coefficients[n]
+
+  const original = Float64Array.from(re)
+  const timeEnergy = energy(re, im)
+
+  fft(re, im)
+  const spectralEnergy = energy(re, im) / N
+
+  const bins = binCount(N)
+  const amplitude = new Float64Array(bins)
+  amplitudeSpectrum(re, im, amplitude, gain)
+
+  // Round trip on the same buffers: FFT then inverse must return the input.
+  ifft(re, im)
+  let roundTripError = 0
+  for (let n = 0; n < N; n++) {
+    const deviation = Math.abs(re[n] - original[n])
+    if (deviation > roundTripError) roundTripError = deviation
+  }
+
+  const out = Float32Array.from(amplitude)
+  post(
+    {
+      type: 'inspection',
+      id,
+      N,
+      fs,
+      amplitude: out.buffer,
+      roundTripError,
+      timeEnergy,
+      spectralEnergy,
+    },
+    [out.buffer],
+  )
+}
+
 self.onmessage = (event: MessageEvent<AnalyserRequest>): void => {
   const message = event.data
 
@@ -155,6 +207,10 @@ self.onmessage = (event: MessageEvent<AnalyserRequest>): void => {
         post({ type: 'complete', id: message.id, count: emitted })
         return
       }
+
+      case 'inspect':
+        inspect(message.id, message.samples, message.window, message.fs)
+        return
 
       case 'recycle':
         // Bounded: a runaway pool would be a leak, not an optimisation.

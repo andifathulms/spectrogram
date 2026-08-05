@@ -50,6 +50,12 @@ export type AnalyserRequest =
   | { type: 'analyse'; id: number; samples: Float32Array }
   | { type: 'recycle'; buffer: ArrayBuffer }
   | { type: 'reset' }
+  /**
+   * One-shot inspection of a single N-point frame: amplitude spectrum plus the
+   * round-trip residual. Used by synthesis mode, where the user supplies the
+   * ground truth and wants to check the tool against it.
+   */
+  | { type: 'inspect'; id: number; samples: Float32Array; window: WindowKind; fs: number }
 
 export type AnalyserResponse =
   | { type: 'ready'; info: AnalysisInfo }
@@ -66,6 +72,19 @@ export type AnalyserResponse =
       clipped: boolean
     }
   | { type: 'complete'; id: number; count: number }
+  | {
+      type: 'inspection'
+      id: number
+      N: number
+      fs: number
+      /** One-sided amplitude spectrum, N/2 + 1 floats, window gain corrected. */
+      amplitude: ArrayBuffer
+      /** Largest absolute deviation after FFT then inverse FFT. */
+      roundTripError: number
+      /** Time-domain energy and its spectral counterpart — Parseval, live. */
+      timeEnergy: number
+      spectralEnergy: number
+    }
   | { type: 'fault'; message: string }
 
 export const DEFAULT_CONFIG: AnalysisConfig = {

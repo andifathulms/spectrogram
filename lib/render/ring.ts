@@ -21,6 +21,8 @@ export interface ColumnRing {
   write(column: Float32Array): void
   /** Reads column `age` steps back from the newest (0 = newest) into `out`. */
   read(age: number, out: Float32Array): boolean
+  /** One value from column `age`, without copying the column. For readouts. */
+  valueAt(age: number, bin: number): number
   /** Raw slot access for the renderer, which walks the ring in place. */
   slotOffset(slot: number): number
   readonly data: Float32Array
@@ -70,6 +72,12 @@ export function createColumnRing(capacity: number, bins: number): ColumnRing {
       const slot = (head - 1 - age + capacity * 2) % capacity
       out.set(data.subarray(slot * bins, slot * bins + bins))
       return true
+    },
+
+    valueAt(age: number, bin: number): number {
+      if (age < 0 || age >= filled || bin < 0 || bin >= bins) return 0
+      const slot = (head - 1 - age + capacity * 2) % capacity
+      return data[slot * bins + bin]
     },
 
     slotOffset(slot: number): number {

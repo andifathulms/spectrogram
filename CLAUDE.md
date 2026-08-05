@@ -149,4 +149,17 @@ The site states plainly that microphone audio never leaves the device, that ther
 
 ## Current state
 
-M0 — not yet scaffolded. Next: package scaffold, then `dft.ts`, then `fft.ts`, then the four correctness suites. **No UI work until `pnpm test:dsp` passes and `pnpm bench:fft` clears the frame budget.**
+M0–M5 built. 230 tests green; `pnpm test:dsp`, `pnpm bench:fft`, `pnpm typecheck`, `pnpm lint` and `pnpm build` all pass.
+
+Benchmark at the reference load (2048 points, 75% overlap, 48 kHz), on desktop: 0.096 ms/column, 111× real time, 0.6 B/column of heap growth over a minute.
+
+**Two deviations from the layout above, both deliberate:**
+
+- Analysis runs in `workers/analyser.worker.ts`, not in an AudioWorklet. An AudioWorklet module cannot reliably use ES imports, so the FFT there would have to be a second, inlined copy of `lib/dsp` — untested by the correctness suites, and precisely the failure mode this project exists to rule out. `public/worklets/tap.worklet.js` is a pure capture tap that computes nothing, with a ScriptProcessor fallback. Invariant 7 holds on both paths.
+- `lib/hooks/` and `lib/ui/` exist alongside the directories listed above, holding the plate's orchestration hook and readout formatting. Nothing is computed in a component (invariant 15).
+
+**Outstanding:**
+
+- **No measurement on a real mid-range phone.** The benchmark numbers are desktop. iOS audio startup, mic permission and worklet support have also not been exercised on a device — all three are load-bearing and all three behave differently from desktop Chrome.
+- **No automated browser test.** The `AnalyserNode` cross-check is an interaction in the comparison view, not a test in CI. Divergences it surfaces are for a human to read today.
+- **M6 polish** is partial: reduced motion and keyboard operation are handled, the harmonics gallery and offline shell are not.

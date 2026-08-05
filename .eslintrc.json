@@ -1,0 +1,17 @@
+{
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["**/lib/dsp/dft", "@/lib/dsp/dft"],
+            "message": "dft.ts is the O(n^2) test oracle. It is never imported outside tests."
+          }
+        ]
+      }
+    ]
+  },
+  "ignorePatterns": ["out/", "tests/"]
+}

@@ -66,7 +66,7 @@ pnpm build        # static export to ./out, plus the export verification
 pnpm preview      # serves ./out under the production basePath
 ```
 
-`basePath` must match the repository name. It defaults to `/urai` and is overridden by `NEXT_PUBLIC_BASE_PATH`, which the deploy workflow sets from the Pages configuration.
+`basePath` must match the repository name. It defaults to `/spectrogram` and is overridden by `NEXT_PUBLIC_BASE_PATH`, which the deploy workflow sets from the Pages configuration.
 
 ## Architecture
 

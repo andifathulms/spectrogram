@@ -6,7 +6,7 @@ import { createServer } from 'node:http'
 import { createReadStream, statSync } from 'node:fs'
 import { extname, join, normalize } from 'node:path'
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '/urai'
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '/spectrogram'
 const root = new URL('../out/', import.meta.url).pathname
 const port = Number(process.env.PORT ?? 4173)
 

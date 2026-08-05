@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Dark-first, and appropriate: a spectrogram is light on dark and always has
+ * been. PRD §8.
+ */
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body {
+    background-color: theme('colors.plate');
+    color: #d7dde3;
+  }
+
+  body {
+    font-family: theme('fontFamily.sans');
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: theme('colors.instrument');
+    color: theme('colors.plate');
+  }
+
+  /* Instrument cyan focus ring; never the energy ramp. */
+  :focus-visible {
+    outline: 2px solid theme('colors.instrument');
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /*
+   * Invariant 11. Applied to every numeric readout, without exception —
+   * values change continuously and a readout that reflows is unreadable.
+   */
+  .tabular {
+    font-family: theme('fontFamily.mono');
+    font-variant-numeric: tabular-nums slashed-zero;
+    font-feature-settings: 'tnum' 1, 'zero' 1;
+  }
+
+  .rule {
+    border-color: theme('colors.emulsion');
+  }
+
+  .control-label {
+    @apply text-xs uppercase tracking-[0.14em] text-[#8b97a3];
+  }
+}
+
+/*
+ * Range inputs are the primary control in this app — the tradeoff slider is
+ * meant to be the first thing a visitor touches — so they are styled rather
+ * than left to the browser.
+ */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 1.5rem;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+  height: 2px;
+  background: theme('colors.emulsion');
+}
+
+input[type='range']::-moz-range-track {
+  height: 2px;
+  background: theme('colors.emulsion');
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -6px;
+  border-radius: 9999px;
+  background: theme('colors.instrument');
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: 9999px;
+  background: theme('colors.instrument');
+}
+
+/*
+ * Motion: the scan edge advancing and the plate scrolling are data arriving,
+ * not decoration. Nothing else animates, and even that stops on request.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

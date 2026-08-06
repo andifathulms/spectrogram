@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { CANVAS } from '@/lib/ui/colors'
+import { AXIS_GUTTER_PX } from '@/components/plate/FrequencyAxis'
 
 interface Props {
   samples: Float32Array | null
@@ -27,7 +28,7 @@ export function Waveform({
   windowStartSeconds,
   windowSeconds,
   height = 96,
-  gutter = 68,
+  gutter = AXIS_GUTTER_PX,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -89,7 +90,7 @@ export function Waveform({
 
   return (
     <div className="flex">
-      <div className="w-[68px] shrink-0 border-r border-emulsion" style={{ width: gutter }} />
+      <div className="shrink-0 border-r border-emulsion" style={{ width: gutter }} />
       <div className="relative min-w-0 flex-1" style={{ height }}>
         <canvas ref={canvasRef} className="block h-full w-full" style={{ height }} />
 

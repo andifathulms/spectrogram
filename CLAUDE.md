@@ -47,9 +47,11 @@ app/
     build/                  # synthesis mode
     proof/                  # our FFT vs AnalyserNode
 components/
+  chrome/                   # header, footer
+  home/                     # the landing page's live hero plate
   plate/                    # scrolling bitmap, axes, cursor readout
   wave/                     # waveform + analysis-window bracket
-  controls/                 # window size, overlap, window function, scale
+  controls/                 # sliders, segmented controls, the advanced disclosure
 lib/
   dsp/                      # THE CORE. Pure. Typed arrays in, typed arrays out.
     fft.ts                  # in-place radix-2 Cooley-Tukey + inverse
@@ -60,6 +62,8 @@ lib/
     scales.ts               # linear, log, mel bin mapping
   audio/                    # Web Audio boundary — capture and playback only
   render/                   # ring buffer, ImageData column blitting
+  i18n/                     # every word the interface says, en and id
+  routes.ts                 # every path, once
 worklets/
   analyser.worklet.ts       # the only runtime caller of lib/dsp
 data/
@@ -125,7 +129,10 @@ tests/
 - Comments cite the algorithm or the published coefficient table they implement.
 - Signal-processing terms stay in English in code and UI; interface copy is Indonesian.
 - Sample audio carries a recorded licence in `data/samples/LICENSES.md`. Never bundle audio without one.
-- Tailwind utilities inline; semantic tokens in `tailwind.config.ts` — `plate`, `emulsion`, `energyLow`, `energyMid`, `energyHigh`, `instrument`, `clip`. Never raw hex in components.
+- Tailwind utilities inline; semantic tokens in `tailwind.config.ts`. The instrument — `plate`, `emulsion`, `energyLow`, `energyMid`, `energyHigh`, `instrument`, `clip` — is normative and closed; the chrome around it is `surface`, `raised`, `hairline`, `ink`, `inkMuted`, `inkFaint`. Never raw hex in components. Canvas code cannot read a class, so it takes the same values from `lib/ui/colors`, and `tests/ui/tokens.test.ts` fails if the two drift.
+- Type is a scale, not a size per call site: `display-xl`, `display-lg`, `display-md`, `lede`, `body`, `caption`, `control-label`, `eyebrow`. Page width is the `shell` class; prose is capped at `max-w-readable`.
+- **No copy outside `lib/i18n`.** Not in `lib/dsp`, not in `data/`, not hard-coded in a component. Both dictionaries stay complete — `tests/ui/copy.test.ts` fails otherwise.
+- **Plain word first, technical term behind it.** The interface says "Detail"; "window size" waits in the advanced disclosure. Anything a first-time visitor does not need to read the picture goes inside a `<details>`, never removed.
 
 ## Testing rules
 
@@ -149,7 +156,9 @@ The site states plainly that microphone audio never leaves the device, that ther
 
 ## Current state
 
-M0–M5 built. 230 tests green; `pnpm test:dsp`, `pnpm bench:fft`, `pnpm typecheck`, `pnpm lint` and `pnpm build` all pass.
+M0–M5 built, plus a full interface pass for a first-time visitor. 251 tests green; `pnpm test:dsp`, `pnpm bench:fft`, `pnpm typecheck`, `pnpm lint` and `pnpm build` all pass.
+
+The product is named Spectrogram; English is the default locale and Bahasa Indonesia is complete beside it. Route slugs are English and locale-independent (`listen`, `build`, `proof`).
 
 Benchmark at the reference load (2048 points, 75% overlap, 48 kHz), on desktop: 0.096 ms/column, 111× real time, 0.6 B/column of heap growth over a minute.
 
@@ -162,4 +171,5 @@ Benchmark at the reference load (2048 points, 75% overlap, 48 kHz), on desktop: 
 
 - **No measurement on a real mid-range phone.** The benchmark numbers are desktop. iOS audio startup, mic permission and worklet support have also not been exercised on a device — all three are load-bearing and all three behave differently from desktop Chrome.
 - **No automated browser test.** The `AnalyserNode` cross-check is an interaction in the comparison view, not a test in CI. Divergences it surfaces are for a human to read today.
-- **M6 polish** is partial: reduced motion and keyboard operation are handled, the harmonics gallery and offline shell are not.
+- **M6 polish** is partial: reduced motion, keyboard operation, a skip link and mobile layout are handled; the harmonics gallery and offline shell are not.
+- **The interface has not been read by anyone but its author.** The plain-language framing is a hypothesis about what a first-time visitor needs, not a tested one.

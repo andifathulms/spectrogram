@@ -31,6 +31,12 @@ interface Props {
   height: number
 }
 
+/**
+ * Width of the tick gutter. Compact labels ("20 kHz", not "20.00 kHz") fit in
+ * 56px, and on a 390px phone the twelve pixels saved are plate.
+ */
+export const AXIS_GUTTER_PX = 56
+
 /** No two labels closer than this, or the top of a log axis becomes a smudge. */
 const MIN_LABEL_GAP_PX = 18
 
@@ -56,7 +62,7 @@ export function FrequencyAxis({ scale, minHz, maxHz, height }: Props) {
   }
 
   return (
-    <div className="relative w-[68px] shrink-0 border-r border-emulsion" style={{ height }}>
+    <div className="relative shrink-0 border-r border-emulsion" style={{ height, width: AXIS_GUTTER_PX }}>
       {placed.map(({ tick, top }) => {
         return (
           <div

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Chivo_Mono, Instrument_Sans, Instrument_Serif } from 'next/font/google'
 
 import './globals.css'
+import { DEFAULT_LOCALE } from '@/lib/i18n'
 
 /**
  * Fonts are fetched at build time and self-hosted in the export. Invariant 9
@@ -28,9 +29,9 @@ const mono = Chivo_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Urai — spectrogram dan FFT',
+  title: 'Spectrogram — see what sound looks like',
   description:
-    'Suara diurai menjadi frekuensinya, dengan Cooley-Tukey FFT yang ditulis dari nol. Audio tidak pernah meninggalkan perangkat.',
+    'Watch sound split into the notes it is made of, live, in your browser. The Fourier transform behind it is written from scratch, and your audio never leaves the device.',
 }
 
 export const viewport: Viewport = {
@@ -41,7 +42,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
+    <html lang={DEFAULT_LOCALE} className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <body className="min-h-screen bg-plate antialiased">{children}</body>
     </html>
   )

@@ -1,14 +1,14 @@
 /**
- * Indonesian first, English second (PRD §8).
+ * English is the default; Indonesian is complete beside it.
  *
  * Signal-processing terms stay in English in both dictionaries — bin, window,
  * overlap, Nyquist, aliasing, leakage — because the reader will meet them in
  * that form everywhere else.
  */
 
-export const LOCALES = ['id', 'en'] as const
+export const LOCALES = ['en', 'id'] as const
 export type Locale = (typeof LOCALES)[number]
-export const DEFAULT_LOCALE: Locale = 'id'
+export const DEFAULT_LOCALE: Locale = 'en'
 
 export function isLocale(value: string): value is Locale {
   return (LOCALES as readonly string[]).includes(value)
@@ -117,7 +117,7 @@ const id: Copy = {
   localeName: 'Bahasa Indonesia',
   otherLocaleName: 'English',
 
-  title: 'Urai',
+  title: 'Spectrogram',
   tagline: 'Suara diurai menjadi frekuensinya, langsung, dengan transform yang ditulis sendiri.',
 
   navPlate: 'Plate',
@@ -219,7 +219,7 @@ const en: Copy = {
   localeName: 'English',
   otherLocaleName: 'Bahasa Indonesia',
 
-  title: 'Urai',
+  title: 'Spectrogram',
   tagline: 'Sound decomposed into its frequencies, live, with the transform written from scratch.',
 
   navPlate: 'Plate',
@@ -317,7 +317,7 @@ const en: Copy = {
   footer: 'The transform is written from scratch. Cooley & Tukey (1965); Harris (1978) for windows.',
 }
 
-export const COPY: Record<Locale, Copy> = { id, en }
+export const COPY: Record<Locale, Copy> = { en, id }
 
 export function copyFor(locale: string): Copy {
   return isLocale(locale) ? COPY[locale] : COPY[DEFAULT_LOCALE]

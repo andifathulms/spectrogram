@@ -1,8 +1,7 @@
-# Urai
+# Spectrogram
 
 **Sound decomposed into its frequencies, with the transform written from scratch — and the time-frequency tradeoff made into a slider you can drag.**
 
-> *urai* / *mengurai* (Indonesian) — to unravel, to decompose into constituent parts. What a Fourier transform does.
 
 A static site. No backend, no accounts, and no network requests at runtime.
 

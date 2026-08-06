@@ -68,4 +68,4 @@ class TapProcessor extends AudioWorkletProcessor {
   }
 }
 
-registerProcessor('urai-tap', TapProcessor)
+registerProcessor('spectrogram-tap', TapProcessor)

@@ -70,7 +70,7 @@ export async function startCapture(options: CaptureOptions): Promise<CaptureResu
   if (typeof AudioWorkletNode !== 'undefined') {
     try {
       await context.audioWorklet.addModule(tapWorkletUrl())
-      const tap = new AudioWorkletNode(context, 'urai-tap', {
+      const tap = new AudioWorkletNode(context, 'spectrogram-tap', {
         numberOfInputs: 1,
         numberOfOutputs: 0,
       })

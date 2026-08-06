@@ -27,7 +27,7 @@ export default function LocaleLayout({
   const copy = copyFor(params.locale)
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div lang={params.locale} className="flex min-h-screen flex-col">
       <SiteHeader locale={params.locale} copy={copy} />
       <main className="flex-1">{children}</main>
       <SiteFooter copy={copy} />

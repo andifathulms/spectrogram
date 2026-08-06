@@ -1,4 +1,4 @@
-# CLAUDE.md — Urai
+# CLAUDE.md — Spectrogram
 
 Spectrogram and FFT explainer. Hand-written Cooley-Tukey transform, live spectrogram plate, and the time-frequency tradeoff as a draggable control. Static site, GitHub Pages, no backend.
 

@@ -1,9 +1,8 @@
-# PRD — Urai
+# PRD — Spectrogram
 
 **Sound decomposed into its frequencies, live, with the transform written from scratch — and the time-frequency tradeoff made into a slider you can drag.**
 
-> *urai* / *mengurai* (Indonesian) — to unravel, to decompose into constituent parts. What a Fourier transform does.
-> Rename freely; the slug is used throughout as `urai`.
+> The product is named `Spectrogram`; the repository slug is `spectrogram`.
 
 | | |
 |---|---|

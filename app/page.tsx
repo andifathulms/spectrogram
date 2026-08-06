@@ -22,7 +22,7 @@ export default function RootPage() {
   return (
     <main className="flex min-h-screen items-center justify-center p-8">
       <Link href={`/${DEFAULT_LOCALE}/`} className="font-display text-3xl text-instrument underline">
-        Urai
+        Spectrogram
       </Link>
     </main>
   )

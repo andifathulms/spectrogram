@@ -51,7 +51,7 @@ export interface AnalysisClient {
 export function createAnalysisClient(handlers: AnalysisClientHandlers): AnalysisClient {
   const worker = new Worker(new URL('../../workers/analyser.worker.ts', import.meta.url), {
     type: 'module',
-    name: 'urai-analyser',
+    name: 'spectrogram-analyser',
   })
 
   let info: AnalysisInfo | null = null

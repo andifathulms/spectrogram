@@ -42,10 +42,10 @@ pnpm lint
 
 ```
 app/
-  [locale]/                 # id (default), en
-    plat/                   # the spectrogram plate
-    susun/                  # synthesis mode
-    banding/                # our FFT vs AnalyserNode
+  [locale]/                 # en (default), id
+    listen/                 # the spectrogram plate
+    build/                  # synthesis mode
+    proof/                  # our FFT vs AnalyserNode
 components/
   plate/                    # scrolling bitmap, axes, cursor readout
   wave/                     # waveform + analysis-window bracket

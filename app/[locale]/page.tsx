@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import { LOCALES, copyFor } from '@/lib/i18n'
+import { path } from '@/lib/routes'
 import { RampLegend } from '@/components/plate/RampLegend'
 
 export function generateStaticParams() {
@@ -26,7 +27,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
 
       <div className="mt-10 flex flex-wrap items-center gap-6">
         <Link
-          href={`/${params.locale}/plat/`}
+          href={path(params.locale, 'listen')}
           className="border border-instrument px-5 py-2.5 text-sm text-instrument hover:bg-instrument hover:text-plate"
         >
           {copy.homeStart}

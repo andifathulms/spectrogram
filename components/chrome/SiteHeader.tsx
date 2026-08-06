@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 
 import type { Copy, Locale } from '@/lib/i18n'
 import { LOCALES } from '@/lib/i18n'
+import { path, swapLocale } from '@/lib/routes'
 
 interface Props {
   locale: string
@@ -15,14 +16,14 @@ export function SiteHeader({ locale, copy }: Props) {
   const pathname = usePathname() ?? ''
 
   const links = [
-    { href: `/${locale}/`, label: copy.navHome },
-    { href: `/${locale}/plat/`, label: copy.navPlate },
-    { href: `/${locale}/susun/`, label: copy.navSynthesis },
-    { href: `/${locale}/banding/`, label: copy.navComparison },
+    { href: path(locale, 'home'), label: copy.navHome },
+    { href: path(locale, 'listen'), label: copy.navPlate },
+    { href: path(locale, 'build'), label: copy.navSynthesis },
+    { href: path(locale, 'proof'), label: copy.navComparison },
   ]
 
   const other = (LOCALES.find((l) => l !== locale) ?? 'en') as Locale
-  const swapped = pathname.replace(`/${locale}`, `/${other}`) || `/${other}/`
+  const swapped = swapLocale(pathname, locale, other)
 
   return (
     <header className="border-b border-emulsion">

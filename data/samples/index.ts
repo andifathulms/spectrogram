@@ -13,11 +13,8 @@
  */
 
 export interface SampleDefinition {
+  /** Also the key its label and hint are stored under in lib/i18n. */
   readonly id: string
-  /** Indonesian label for the interface. */
-  readonly label: string
-  /** What the visitor should look for on the plate. */
-  readonly hint: string
   readonly seconds: number
   /** Renders the sample at a given sample rate. */
   readonly render: (fs: number, seconds: number) => Float32Array
@@ -203,43 +200,31 @@ function drumHit(fs: number, seconds: number): Float32Array {
 export const SAMPLES: readonly SampleDefinition[] = [
   {
     id: 'senar-gitar',
-    label: 'Senar gitar',
-    hint: 'Satu fundamental di 196 Hz dengan overtone berjarak sama di atasnya — harmonic stack.',
     seconds: 3,
     render: guitarString,
   },
   {
     id: 'siulan',
-    label: 'Siulan naik',
-    hint: 'Satu garis bersih memanjat plate. Lurus pada skala log, melengkung pada linear.',
     seconds: 3,
     render: whistle,
   },
   {
     id: 'desis',
-    label: 'Desis "sss"',
-    hint: 'Broadband noise — energi tersebar di seluruh frekuensi tinggi, tanpa garis.',
     seconds: 2.5,
     render: sibilant,
   },
   {
     id: 'akor',
-    label: 'Akor C mayor',
-    hint: 'Tiga harmonic stack sekaligus. Perbesar window untuk memisahkannya.',
     seconds: 3,
     render: chord,
   },
   {
     id: 'ketukan',
-    label: 'Ketukan',
-    hint: 'Transien pendek. Perkecil window agar waktunya tajam — dan lihat pitch-nya kabur.',
     seconds: 2,
     render: drumHit,
   },
   {
     id: 'sapuan-nyquist',
-    label: 'Sapuan melewati Nyquist',
-    hint: 'Nada naik terus, tetapi pantulannya turun lagi setelah melewati fs/2 — aliasing.',
     seconds: 4,
     render: nyquistSweep,
   },

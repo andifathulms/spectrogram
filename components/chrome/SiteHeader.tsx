@@ -76,6 +76,8 @@ export function SiteHeader({ locale, copy }: Props) {
         <Link
           href={swapped}
           hrefLang={other}
+          title={copy.otherLocaleName}
+          aria-label={copy.otherLocaleName}
           className="shrink-0 rounded-full border border-hairline px-2.5 py-1 text-xs uppercase tracking-wider text-inkMuted hover:border-instrument hover:text-instrument"
         >
           {other}

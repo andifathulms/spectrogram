@@ -15,12 +15,6 @@ export type FrequencyScale = 'linear' | 'log' | 'mel'
 
 export const FREQUENCY_SCALES: readonly FrequencyScale[] = ['linear', 'log', 'mel']
 
-export const SCALE_LABELS: Record<FrequencyScale, string> = {
-  linear: 'Linear — apa adanya dari FFT',
-  log: 'Log — sesuai persepsi nada',
-  mel: 'Mel — sesuai pendengaran',
-}
-
 /** O'Shaughnessy (1987), the form used throughout speech processing. */
 export function hzToMel(hz: number): number {
   return 2595 * Math.log10(1 + hz / 700)

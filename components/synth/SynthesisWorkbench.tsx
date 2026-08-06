@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { apparentFrequency, isAliased, peakOf, renderPartials, type Partial } from '@/lib/dsp/additive'
-import { FREQUENCY_SCALES, SCALE_LABELS, type FrequencyScale } from '@/lib/dsp/scales'
-import { WINDOW_KINDS, WINDOW_LABELS, type WindowKind } from '@/lib/dsp/windows'
+import { FREQUENCY_SCALES, type FrequencyScale } from '@/lib/dsp/scales'
+import { WINDOW_KINDS, type WindowKind } from '@/lib/dsp/windows'
 import { createAnalysisClient, type AnalysisClient, type Inspection } from '@/lib/audio/analysis'
 import { startAudioContext } from '@/lib/audio/context'
 import { play, type PlaybackHandle } from '@/lib/audio/playback'
@@ -226,7 +226,7 @@ export function SynthesisWorkbench({ copy }: { copy: Copy }) {
               options={WINDOW_KINDS.map((kind) => ({
                 value: kind,
                 label: kind,
-                title: WINDOW_LABELS[kind],
+                title: copy.windowLabels[kind],
               }))}
             />
           </Field>
@@ -238,7 +238,7 @@ export function SynthesisWorkbench({ copy }: { copy: Copy }) {
               options={FREQUENCY_SCALES.map((value) => ({
                 value,
                 label: value,
-                title: SCALE_LABELS[value],
+                title: copy.scaleLabels[value],
               }))}
             />
           </Field>

@@ -5,14 +5,14 @@ export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }))
 }
 
-export default function PlatePage({ params }: { params: { locale: string } }) {
+export default function ListenPage({ params }: { params: { locale: string } }) {
   const copy = copyFor(params.locale)
 
   return (
-    <div className="mx-auto max-w-[1400px] px-5 py-8">
+    <div className="shell py-8 sm:py-10">
       <header className="mb-6">
-        <h1 className="font-display text-4xl text-energyHigh">{copy.plateTitle}</h1>
-        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-inkMuted">{copy.plateLead}</p>
+        <h1 className="display-lg">{copy.listenTitle}</h1>
+        <p className="lede mt-3 max-w-readable">{copy.listenLede}</p>
       </header>
 
       <PlateWorkbench copy={copy} />

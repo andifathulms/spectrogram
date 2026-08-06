@@ -49,14 +49,6 @@ export const PUBLISHED_COHERENT_GAIN: Record<WindowKind, number> = {
   blackman: 0.42,
 }
 
-/** Indonesian labels for the interface; the term itself stays in English. */
-export const WINDOW_LABELS: Record<WindowKind, string> = {
-  rectangular: 'Rectangular — tanpa taper',
-  hann: 'Hann — taper kosinus',
-  hamming: 'Hamming — skirt lebih rendah',
-  blackman: 'Blackman — leakage paling kecil',
-}
-
 const cache = new Map<string, Float64Array>()
 
 /** Cached coefficient array. Invariant 4: built once per (kind, N, symmetry). */

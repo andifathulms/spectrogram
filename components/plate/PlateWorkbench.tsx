@@ -4,10 +4,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { SAMPLES, sampleById } from '@/data/samples'
 import { FFT_SIZES } from '@/lib/dsp/errors'
-import { FREQUENCY_SCALES, SCALE_LABELS, type FrequencyScale } from '@/lib/dsp/scales'
-import { WINDOW_KINDS, WINDOW_LABELS, type WindowKind } from '@/lib/dsp/windows'
+import { FREQUENCY_SCALES, type FrequencyScale } from '@/lib/dsp/scales'
+import { WINDOW_KINDS, type WindowKind } from '@/lib/dsp/windows'
 import { hopFor } from '@/lib/dsp/spectrum'
-import { startAudioContext, audioSupport, currentSampleRate } from '@/lib/audio/context'
+import { startAudioContext, audioSupport } from '@/lib/audio/context'
 import { startCapture, type Capture } from '@/lib/audio/capture'
 import { play, type PlaybackHandle } from '@/lib/audio/playback'
 import { MIN_PLOT_HZ, useSpectrogram, type SourceMode } from '@/lib/hooks/useSpectrogram'
@@ -15,7 +15,8 @@ import * as fmt from '@/lib/ui/format'
 import type { Copy } from '@/lib/i18n'
 
 import { Button, Field, Segmented, Slider } from '@/components/controls/Control'
-import { Readout, ReadoutRow } from '@/components/ui/Readout'
+import { Disclosure } from '@/components/controls/Disclosure'
+import { Readout } from '@/components/ui/Readout'
 import { PlateCanvas, type PlateCursor } from './PlateCanvas'
 import { RampLegend } from './RampLegend'
 import { Waveform } from '@/components/wave/Waveform'
@@ -23,6 +24,23 @@ import { Waveform } from '@/components/wave/Waveform'
 /** Window sizes offered by the slider. Below 128 the plate stops being legible. */
 const SIZES = FFT_SIZES.filter((N) => N >= 128 && N <= 8192)
 const OVERLAPS = [0, 0.5, 0.75, 0.875] as const
+
+/**
+ * The tradeoff as three places to stand.
+ *
+ * A slider from 128 to 8192 is the honest control and it stays, one panel
+ * down. But "128" and "8192" mean nothing to someone meeting this for the
+ * first time, and the point of the page is not the number — it is that moving
+ * in either direction costs you something. Three named positions make that
+ * legible in one glance, and the numbers underneath say what each one bought.
+ */
+const PRESETS = [
+  { key: 'sharp', N: 512 },
+  { key: 'balanced', N: 2048 },
+  { key: 'fine', N: 8192 },
+] as const
+
+type PresetKey = (typeof PRESETS)[number]['key'] | 'custom'
 
 export function PlateWorkbench({ copy }: { copy: Copy }) {
   const [sizeIndex, setSizeIndex] = useState(SIZES.indexOf(2048))
@@ -34,7 +52,6 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
   const [sampleId, setSampleId] = useState(SAMPLES[0].id)
 
   const [fs, setFs] = useState(48_000)
-  const [audioReady, setAudioReady] = useState(false)
   const [playing, setPlaying] = useState(false)
   const [scan, setScan] = useState<number | null>(null)
   const [cursor, setCursor] = useState<PlateCursor | null>(null)
@@ -57,6 +74,7 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
   const { analyseBuffer, pushSamples, reset, info } = spectrogram
 
   const sample = sampleById(sampleId) ?? SAMPLES[0]
+  const sampleCopy = copy.samples[sample.id]
 
   // The sample is regenerated whenever the sample rate changes, so what is
   // analysed and what is played are always the same audio.
@@ -93,7 +111,6 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
     }
     const context = await startAudioContext()
     setFs(context.sampleRate)
-    setAudioReady(true)
     return context
   }, [])
 
@@ -178,21 +195,106 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
   // The bracket follows the cursor when hovering, the scan edge otherwise —
   // so the waveform and the plate stay tied together either way.
   const bracketAt =
-    cursorTime !== null && mode === 'sample'
-      ? cursorTime
-      : scan !== null
-        ? scan * duration
-        : null
+    cursorTime !== null && mode === 'sample' ? cursorTime : scan !== null ? scan * duration : null
+
+  const preset: PresetKey = PRESETS.find((entry) => entry.N === N)?.key ?? 'custom'
+  const presetLabels: Record<PresetKey, string> = {
+    sharp: copy.detailSharpTiming,
+    balanced: copy.detailBalanced,
+    fine: copy.detailFinePitch,
+    custom: copy.detailCustom,
+  }
 
   return (
-    <div className="space-y-6">
-      <section>
+    <div className="space-y-5">
+      {/*
+       * The source comes first. It used to sit below the plate, which meant
+       * the first thing a visitor saw was a picture with no obvious way to
+       * make it move.
+       */}
+      <section className="card p-5">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+          <h2 className="control-label">{copy.soundTitle}</h2>
+          {micLive && (
+            <span className="flex items-center gap-2 text-sm text-instrument">
+              <span
+                className="block h-2 w-2 animate-pulseDot rounded-full bg-instrument"
+                aria-hidden
+              />
+              {copy.micLive} — {copy.micNote}
+            </span>
+          )}
+        </div>
+
+        <div className="mt-3 flex flex-wrap gap-2">
+          {SAMPLES.map((entry) => {
+            const active = mode === 'sample' && entry.id === sampleId
+            return (
+              <button
+                key={entry.id}
+                type="button"
+                aria-pressed={active}
+                onClick={() => {
+                  stopMic()
+                  setMode('sample')
+                  setSampleId(entry.id)
+                }}
+                className={`rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
+                  active
+                    ? 'border-instrument bg-instrument/10 text-instrument'
+                    : 'border-hairline text-inkMuted hover:border-inkFaint hover:text-ink'
+                }`}
+              >
+                {copy.samples[entry.id]?.label ?? entry.id}
+              </button>
+            )
+          })}
+        </div>
+
+        <p className="mt-3 max-w-readable text-sm leading-relaxed text-inkMuted">
+          {sampleCopy?.hint}
+        </p>
+
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <Button variant="primary" onClick={playing ? stopPlayback : () => void onPlay()}>
+            {playing ? copy.stop : copy.play}
+          </Button>
+          <Button onClick={() => void onMic()}>{micLive ? copy.micStop : copy.micStart}</Button>
+        </div>
+
+        {micStatus !== null && (
+          <p className="mt-4 max-w-readable border-l-2 border-clip pl-3 text-sm leading-relaxed text-inkMuted">
+            {micStatus}
+          </p>
+        )}
+        {spectrogram.fault !== null && (
+          <p className="mt-4 max-w-readable border-l-2 border-clip pl-3 text-sm text-clip">
+            {spectrogram.fault}
+          </p>
+        )}
+      </section>
+
+      {/* The instrument itself. */}
+      <section className="overflow-hidden rounded-card border border-hairline bg-plate">
+        {/* The wave first, with the analysed slice bracketed on it, then the
+            picture that slice becomes. Each gets its own label: unlabelled,
+            the waveform reads as part of the plate. */}
+        <div className="border-b border-hairline px-3 py-2">
+          <span className="control-label">{copy.waveTitle}</span>
+        </div>
+
         <Waveform
           samples={mode === 'sample' ? audio : null}
           fs={fs}
           windowStartSeconds={bracketAt}
           windowSeconds={N / fs}
         />
+
+        <div className="flex items-center justify-between gap-4 border-y border-hairline px-3 py-2">
+          <span className="control-label">{copy.axisPitch}</span>
+          <RampLegend quiet={copy.quiet} loud={copy.loud} />
+        </div>
+
         <PlateCanvas
           bitmap={spectrogram.bitmap}
           revision={spectrogram.revision}
@@ -206,18 +308,20 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
           scrolling={mode === 'mic'}
           onCursor={setCursor}
         />
-        <div className="flex flex-wrap items-center justify-between gap-4 border-t border-emulsion px-[68px] py-2">
-          <span className="tabular text-[10px] text-inkFaint">
+
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-hairline px-3 py-2">
+          <span className="tabular text-xs text-inkFaint">
             {mode === 'sample'
               ? `0 ${copy.units.s} → ${duration.toFixed(2)} ${copy.units.s}`
               : `−${duration.toFixed(1)} ${copy.units.s} → 0 ${copy.units.s}`}
           </span>
-          <RampLegend />
+          <span className="control-label">{copy.axisTime}</span>
         </div>
       </section>
 
-      <section className="rounded-sm border border-emulsion p-4">
-        <ReadoutRow>
+      {/* What the cursor is over. Three numbers, not six. */}
+      <section className="card p-5">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
           <Readout
             label={copy.time}
             value={cursorTime === null ? copy.hoverHint : fmt.seconds(cursorTime)}
@@ -233,158 +337,154 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
             value={cursorDb === null ? '—' : fmt.db(cursorDb)}
             emphasis={cursorDb !== null}
           />
-          <Readout label={copy.bin} value={cursor === null ? '—' : fmt.count(Math.round(cursor.bin))} />
-          <Readout label={copy.peak} value={fmt.db(20 * Math.log10(Math.max(spectrogram.peak, 1e-6)))} />
-          <div>
-            <div className="control-label">{copy.clipping}</div>
-            <div
-              className={`tabular mt-0.5 text-sm ${spectrogram.clipped ? 'text-clip' : 'text-inkFaint'}`}
-            >
-              {spectrogram.clipped ? copy.clipping : '—'}
-            </div>
-          </div>
-        </ReadoutRow>
+        </div>
+
+        {spectrogram.clipped && (
+          <p className="mt-4 flex flex-wrap items-center gap-2 text-sm text-clip">
+            <span className="rounded-full border border-clip px-2 py-0.5 text-xs uppercase tracking-wider">
+              {copy.clipping}
+            </span>
+            {copy.clippingHelp}
+          </p>
+        )}
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-4">
-        <Field
-          label={copy.windowSize}
-          help={copy.windowSizeHelp}
-          value={`${N} ${copy.units.samples}`}
-        >
+      {/* The lesson, as a control. */}
+      <section className="card p-5">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+          <h2 className="display-md">{copy.detailTitle}</h2>
+          <span className="tabular text-sm text-instrument">
+            {presetLabels[preset]} · {N} {copy.units.samples}
+          </span>
+        </div>
+        <p className="body mt-2 max-w-readable">{copy.detailHelp}</p>
+
+        <div className="mt-4">
+          <Segmented
+            ariaLabel={copy.detailTitle}
+            value={preset}
+            onChange={(key) => {
+              const chosen = PRESETS.find((entry) => entry.key === key)
+              if (chosen !== undefined) setSizeIndex(SIZES.indexOf(chosen.N))
+            }}
+            options={[
+              ...PRESETS.map((entry) => ({ value: entry.key, label: presetLabels[entry.key] })),
+              // Reachable only through the slider; shown so the state is never a lie.
+              ...(preset === 'custom'
+                ? [{ value: 'custom' as PresetKey, label: copy.detailCustom }]
+                : []),
+            ]}
+          />
+        </div>
+
+        <div className="mt-5">
           <Slider
             min={0}
             max={SIZES.length - 1}
             value={sizeIndex}
             onChange={setSizeIndex}
             ariaLabel={copy.windowSize}
-            ticks={[String(SIZES[0]), String(SIZES[SIZES.length - 1])]}
+            ticks={[copy.detailSharpTiming, copy.detailFinePitch]}
           />
-          <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
-            <Readout label={copy.binSpacing} value={fmt.hz(fs / N)} />
-            <Readout label={copy.windowDuration} value={fmt.seconds(N / fs)} />
-          </div>
-        </Field>
+        </div>
 
-        <Field label={copy.overlap} help={copy.overlapHelp} value={fmt.ratio(overlap)}>
-          <Slider
-            min={0}
-            max={OVERLAPS.length - 1}
-            value={overlapIndex}
-            onChange={setOverlapIndex}
-            ariaLabel={copy.overlap}
-            ticks={['0 %', '87 %']}
-          />
-          <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
-            <Readout label={copy.hopDuration} value={fmt.seconds(hop / fs)} />
-            <Readout label={copy.bins} value={fmt.count(N / 2 + 1)} />
-          </div>
-        </Field>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <Readout label={copy.detailTimingNote} value={fmt.seconds(N / fs)} />
+          <Readout label={copy.detailPitchNote} value={fmt.hz(fs / N)} />
+        </div>
+      </section>
 
-        <Field label={copy.windowFunction} help={copy.windowFunctionHelp}>
-          <Segmented
-            ariaLabel={copy.windowFunction}
-            value={windowKind}
-            onChange={setWindowKind}
-            options={WINDOW_KINDS.map((kind) => ({
-              value: kind,
-              label: kind,
-              title: WINDOW_LABELS[kind],
-            }))}
-          />
-          <p className="mt-2 text-xs text-inkMuted">{WINDOW_LABELS[windowKind]}</p>
-        </Field>
-
-        <Field label={copy.frequencyScale} help={copy.frequencyScaleHelp}>
+      {/* How the picture is laid out — a preference, not a measurement. */}
+      <section className="card p-5">
+        <h2 className="control-label">{copy.viewTitle}</h2>
+        <div className="mt-3">
           <Segmented
             ariaLabel={copy.frequencyScale}
             value={scale}
             onChange={setScale}
             options={FREQUENCY_SCALES.map((value) => ({
               value,
-              label: value,
-              title: SCALE_LABELS[value],
+              label: copy.scaleLabels[value],
+              title: value,
             }))}
           />
-          <div className="mt-3">
-            <Field label={copy.dynamicRange} value={`${floorDb} ${copy.units.db} → −10 ${copy.units.db}`}>
-              <Slider
-                min={-120}
-                max={-40}
-                step={5}
-                value={floorDb}
-                onChange={setFloorDb}
-                ariaLabel={copy.dynamicRange}
-              />
-            </Field>
-          </div>
-        </Field>
+        </div>
+        <p className="body mt-3 max-w-readable">{copy.frequencyScaleHelp}</p>
       </section>
 
-      <section className="grid gap-6 border-t border-emulsion pt-6 lg:grid-cols-[2fr_1fr]">
-        <div>
-          <div className="control-label">{copy.source}</div>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {SAMPLES.map((entry) => (
-              <button
-                key={entry.id}
-                type="button"
-                title={entry.hint}
-                onClick={() => {
-                  stopMic()
-                  setMode('sample')
-                  setSampleId(entry.id)
-                }}
-                className={`border px-2.5 py-1 text-xs ${
-                  mode === 'sample' && entry.id === sampleId
-                    ? 'border-instrument text-instrument'
-                    : 'border-emulsion text-inkMuted hover:text-energyHigh'
-                }`}
-              >
-                {entry.label}
-              </button>
-            ))}
+      <Disclosure title={copy.advancedTitle} help={copy.advancedHelp}>
+        <div className="grid gap-6 lg:grid-cols-3">
+          <Field
+            label={copy.windowSize}
+            help={copy.windowSizeHelp}
+            value={`${N} ${copy.units.samples}`}
+          >
+            <Slider
+              min={0}
+              max={SIZES.length - 1}
+              value={sizeIndex}
+              onChange={setSizeIndex}
+              ariaLabel={copy.windowSize}
+              ticks={[String(SIZES[0]), String(SIZES[SIZES.length - 1])]}
+            />
+            <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
+              <Readout label={copy.binSpacing} value={fmt.hz(fs / N)} />
+              <Readout label={copy.windowDuration} value={fmt.seconds(N / fs)} />
+            </div>
+          </Field>
+
+          <Field label={copy.overlap} help={copy.overlapHelp} value={fmt.ratio(overlap)}>
+            <Slider
+              min={0}
+              max={OVERLAPS.length - 1}
+              value={overlapIndex}
+              onChange={setOverlapIndex}
+              ariaLabel={copy.overlap}
+              ticks={['0 %', '87 %']}
+            />
+            <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
+              <Readout label={copy.hopDuration} value={fmt.seconds(hop / fs)} />
+              <Readout label={copy.bins} value={fmt.count(N / 2 + 1)} />
+            </div>
+          </Field>
+
+          <Field
+            label={copy.dynamicRange}
+            help={copy.dynamicRangeHelp}
+            value={`${floorDb} ${copy.units.db} → −10 ${copy.units.db}`}
+          >
+            <Slider
+              min={-120}
+              max={-40}
+              step={5}
+              value={floorDb}
+              onChange={setFloorDb}
+              ariaLabel={copy.dynamicRange}
+            />
+          </Field>
+
+          <Field label={copy.windowFunction} help={copy.windowFunctionHelp}>
+            <Segmented
+              ariaLabel={copy.windowFunction}
+              value={windowKind}
+              onChange={setWindowKind}
+              options={WINDOW_KINDS.map((kind) => ({
+                value: kind,
+                label: kind,
+                title: copy.windowLabels[kind],
+              }))}
+            />
+            <p className="mt-2 text-sm text-inkMuted">{copy.windowLabels[windowKind]}</p>
+          </Field>
+
+          <div className="grid grid-cols-2 gap-x-6 gap-y-3 self-start lg:col-span-2">
+            <Readout label={copy.sampleRate} value={`${(fs / 1000).toFixed(3)} kHz`} />
+            <Readout label={copy.nyquist} value={fmt.hz(nyquist)} />
+            <Readout label={copy.bins} value={fmt.count(info?.bins ?? N / 2 + 1)} />
+            <Readout label={copy.columns} value={fmt.count(spectrogram.columns)} />
           </div>
-          <p className="mt-2 max-w-2xl text-xs leading-relaxed text-inkMuted">{sample.hint}</p>
-
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            {!audioReady && (
-              <Button variant="primary" onClick={() => void enableAudio()}>
-                {copy.startAudio}
-              </Button>
-            )}
-            <Button onClick={playing ? stopPlayback : () => void onPlay()}>
-              {playing ? copy.stop : copy.play}
-            </Button>
-            <Button onClick={() => void onMic()} variant={micLive ? 'default' : 'primary'}>
-              {micLive ? copy.micStop : copy.micStart}
-            </Button>
-            {micLive && (
-              <span className="tabular text-xs text-instrument">
-                ● {copy.micLive} — {copy.micNote}
-              </span>
-            )}
-          </div>
-
-          {micStatus !== null && (
-            <p className="mt-3 max-w-2xl border-l-2 border-clip pl-3 text-xs leading-relaxed text-inkMuted">
-              {micStatus}
-            </p>
-          )}
-          {spectrogram.fault !== null && (
-            <p className="mt-3 max-w-2xl border-l-2 border-clip pl-3 text-xs text-clip">
-              {spectrogram.fault}
-            </p>
-          )}
         </div>
-
-        <div className="grid grid-cols-2 gap-x-6 gap-y-3 self-start">
-          <Readout label={copy.sampleRate} value={`${(fs / 1000).toFixed(3)} kHz`} />
-          <Readout label={copy.nyquist} value={fmt.hz(nyquist)} />
-          <Readout label={copy.bins} value={fmt.count(info?.bins ?? N / 2 + 1)} />
-          <Readout label="columns" value={fmt.count(spectrogram.columns)} />
-        </div>
-      </section>
+      </Disclosure>
     </div>
   )
 }

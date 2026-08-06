@@ -21,10 +21,12 @@ export interface Copy {
   title: string
   tagline: string
 
-  navPlate: string
-  navSynthesis: string
-  navComparison: string
+  navListen: string
+  navBuild: string
+  navProof: string
   navHome: string
+  skipToContent: string
+  footerCredit: string
 
   homeLead: string
   homeWhyTitle: string
@@ -110,7 +112,6 @@ export interface Copy {
   // Shared
   privacyBadge: string
   units: { hz: string; db: string; ms: string; s: string; samples: string }
-  footer: string
 }
 
 const id: Copy = {
@@ -120,10 +121,13 @@ const id: Copy = {
   title: 'Spectrogram',
   tagline: 'Suara diurai menjadi frekuensinya, langsung, dengan transform yang ditulis sendiri.',
 
-  navPlate: 'Plate',
-  navSynthesis: 'Susun',
-  navComparison: 'Banding',
+  navListen: 'Lihat suara',
+  navBuild: 'Susun nada',
+  navProof: 'Buktikan',
   navHome: 'Beranda',
+  skipToContent: 'Lewati ke konten',
+  footerCredit:
+    'Dibuat sebagai penjelasan, bukan produk. Transform-nya ditulis dari nol — Cooley & Tukey (1965), dan Harris (1978) untuk window function.',
 
   homeLead:
     'Bentuk gelombang menunjukkan kuat lemahnya suara. Ia tidak bisa menunjukkan nada — dengungan rendah dan siulan tinggi sama-sama hanya coretan. Fourier transform menjawab pertanyaan yang lain: frekuensi apa saja yang ada, dan sekuat apa.',
@@ -210,9 +214,8 @@ const id: Copy = {
   comparisonUnavailable: 'AnalyserNode tidak tersedia di browser ini.',
   timing: 'Waktu komputasi',
 
-  privacyBadge: 'Tanpa jaringan setelah dimuat',
+  privacyBadge: 'Tidak ada jaringan',
   units: { hz: 'Hz', db: 'dB', ms: 'ms', s: 's', samples: 'sample' },
-  footer: 'Transform ditulis dari nol. Cooley & Tukey (1965); Harris (1978) untuk window function.',
 }
 
 const en: Copy = {
@@ -222,10 +225,13 @@ const en: Copy = {
   title: 'Spectrogram',
   tagline: 'Sound decomposed into its frequencies, live, with the transform written from scratch.',
 
-  navPlate: 'Plate',
-  navSynthesis: 'Synthesis',
-  navComparison: 'Comparison',
+  navListen: 'See sound',
+  navBuild: 'Build a sound',
+  navProof: 'Check the maths',
   navHome: 'Home',
+  skipToContent: 'Skip to content',
+  footerCredit:
+    'Built as an explanation, not a product. The transform is written from scratch — Cooley & Tukey (1965), and Harris (1978) for the windows.',
 
   homeLead:
     'A waveform shows loudness over time. It cannot show you pitch — a low hum and a high whistle are both squiggles. The Fourier transform answers the other question: which frequencies are present, and how strongly.',
@@ -312,9 +318,8 @@ const en: Copy = {
   comparisonUnavailable: 'AnalyserNode is not available in this browser.',
   timing: 'Compute time',
 
-  privacyBadge: 'No network after load',
+  privacyBadge: 'No network',
   units: { hz: 'Hz', db: 'dB', ms: 'ms', s: 's', samples: 'samples' },
-  footer: 'The transform is written from scratch. Cooley & Tukey (1965); Harris (1978) for windows.',
 }
 
 export const COPY: Record<Locale, Copy> = { en, id }

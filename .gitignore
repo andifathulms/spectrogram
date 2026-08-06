@@ -5,3 +5,6 @@ coverage/
 *.tsbuildinfo
 .DS_Store
 .env*.local
+
+# Brand source kit: the assets the app actually uses are copied into public/ and docs/.
+exports/

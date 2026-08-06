@@ -88,27 +88,49 @@ export function SiteHeader({ locale, copy }: Props) {
 }
 
 /**
- * Five bars of a spectrum, in the ramp's own tones. It is the picture the app
- * draws, at 20 pixels — not a logo invented for the corner.
+ * "Batang" — the brand mark, at its published geometry.
+ *
+ * Three bars rising quiet → loud inside a rounded square, taken bar for bar
+ * from exports/svg (x 24/44/64, tops 58/44/30, all landing on the same
+ * baseline). The kit's own rule is that the bars are fixed at three heights
+ * and never animate or resize, so they are written as constants and left
+ * alone.
+ *
+ * The kit's hexes are the app's palette under other names — Loud #D9954B is
+ * energyMid, Paper #E8E8E4 is energyHigh, Quiet #3A5A86 is energyLow — so the
+ * mark is drawn in tokens rather than in brand hex. One palette, and the
+ * convention against raw hex in components survives.
  */
 function BrandMark() {
   const bars = [
-    { height: 6, className: 'bg-energyLow' },
-    { height: 12, className: 'bg-energyMid' },
-    { height: 18, className: 'bg-energyHigh' },
-    { height: 10, className: 'bg-energyMid' },
-    { height: 5, className: 'bg-energyLow' },
+    { x: 24, y: 58, className: 'fill-energyMid' },
+    { x: 44, y: 44, className: 'fill-energyHigh' },
+    { x: 64, y: 30, className: 'fill-energyLow' },
   ]
 
   return (
-    <span className="flex h-5 w-5 items-end justify-between" aria-hidden>
-      {bars.map((bar, index) => (
-        <span
-          key={index}
-          className={`block w-[2px] rounded-[1px] ${bar.className}`}
-          style={{ height: bar.height }}
+    <svg viewBox="0 0 100 100" width="24" height="24" aria-hidden focusable="false">
+      <rect
+        x="1"
+        y="1"
+        width="98"
+        height="98"
+        rx="22"
+        fill="none"
+        className="stroke-hairline"
+        strokeWidth="4"
+      />
+      {bars.map((bar) => (
+        <rect
+          key={bar.x}
+          x={bar.x}
+          y={bar.y}
+          width="12"
+          height={80 - bar.y}
+          rx="2"
+          className={bar.className}
         />
       ))}
-    </span>
+    </svg>
   )
 }

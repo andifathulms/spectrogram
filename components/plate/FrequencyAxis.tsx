@@ -1,7 +1,7 @@
 'use client'
 
 import { positionOf, type FrequencyScale } from '@/lib/dsp/scales'
-import { hz as formatHz } from '@/lib/ui/format'
+import { axisHz } from '@/lib/ui/format'
 
 const LOG_TICKS = [20, 50, 100, 200, 500, 1000, 2000, 5000, 10_000, 20_000]
 
@@ -31,24 +31,41 @@ interface Props {
   height: number
 }
 
+/** No two labels closer than this, or the top of a log axis becomes a smudge. */
+const MIN_LABEL_GAP_PX = 18
+
 export function FrequencyAxis({ scale, minHz, maxHz, height }: Props) {
   const ticks = frequencyTicks(scale, minHz, maxHz)
 
+  /*
+   * A log axis packs its decades towards the top, and at plate heights below
+   * about 400px the highest three labels collide into an unreadable block.
+   * Ticks are laid out from the bottom and any that lands too close to the
+   * last one drawn is dropped — the axis stays legible at every height, which
+   * matters because the hero plate is 260px and the live one is 340.
+   */
+  const placed: { tick: number; top: number }[] = []
+  let lastTop = Number.POSITIVE_INFINITY
+  for (const tick of ticks) {
+    const t = positionOf(scale, tick, minHz, maxHz)
+    if (t < -0.001 || t > 1.001) continue
+    const top = (1 - t) * height
+    if (lastTop - top < MIN_LABEL_GAP_PX) continue
+    placed.push({ tick, top })
+    lastTop = top
+  }
+
   return (
     <div className="relative w-[68px] shrink-0 border-r border-emulsion" style={{ height }}>
-      {ticks.map((tick) => {
-        const t = positionOf(scale, tick, minHz, maxHz)
-        if (t < -0.001 || t > 1.001) return null
-        const top = (1 - t) * height
-
+      {placed.map(({ tick, top }) => {
         return (
           <div
             key={tick}
             className="absolute right-1.5 flex -translate-y-1/2 items-center gap-1.5"
             style={{ top }}
           >
-            <span className="tabular text-[10px] leading-none text-inkMuted">
-              {formatHz(tick)}
+            <span className="tabular whitespace-nowrap text-[10px] leading-none text-inkMuted">
+              {axisHz(tick)}
             </span>
             <span className="block h-px w-1.5 bg-emulsion" />
           </div>

@@ -9,7 +9,7 @@ import { ENERGY_PALETTE, PALETTE_SIZE, rampColor } from '@/lib/render/palette'
  * Built from the same LUT the plate uses — never a hand-written gradient that
  * could drift away from it.
  */
-export function RampLegend({ className = '' }: { className?: string }) {
+export function RampBar({ className = 'h-2 w-40' }: { className?: string }) {
   const gradient = useMemo(() => {
     const steps: string[] = []
     for (let i = 0; i <= 16; i++) {
@@ -20,15 +20,28 @@ export function RampLegend({ className = '' }: { className?: string }) {
   }, [])
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
-      <span className="control-label">quiet</span>
-      <div
-        className="h-2 w-40 border border-emulsion"
-        style={{ background: gradient }}
-        aria-hidden
-        title={`${PALETTE_SIZE}-step energy ramp`}
-      />
-      <span className="control-label">loud</span>
+    <div
+      className={`rounded-full border border-hairline ${className}`}
+      style={{ background: gradient }}
+      aria-hidden
+      title={`${PALETTE_SIZE}-step energy ramp`}
+    />
+  )
+}
+
+interface Props {
+  className?: string
+  /** Localised ends of the ramp. The defaults keep the component standalone. */
+  quiet?: string
+  loud?: string
+}
+
+export function RampLegend({ className = '', quiet = 'quiet', loud = 'loud' }: Props) {
+  return (
+    <div className={`flex items-center gap-2.5 ${className}`}>
+      <span className="control-label">{quiet}</span>
+      <RampBar className="h-2 w-20 sm:w-32" />
+      <span className="control-label">{loud}</span>
     </div>
   )
 }

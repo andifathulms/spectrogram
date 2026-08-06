@@ -19,7 +19,6 @@ export interface Copy {
   otherLocaleName: string
 
   title: string
-  tagline: string
 
   navListen: string
   navBuild: string
@@ -28,14 +27,29 @@ export interface Copy {
   skipToContent: string
   footerCredit: string
 
-  homeLead: string
+  // Home
+  heroTitle: string
+  heroLede: string
+  heroCta: string
+  heroSecondary: string
+  heroCaption: string
+  readTitle: string
+  readTimeTitle: string
+  readTimeBody: string
+  readPitchTitle: string
+  readPitchBody: string
+  readBrightTitle: string
+  readBrightBody: string
+  tryTitle: string
+  tryListenBody: string
+  tryBuildBody: string
+  tryProofBody: string
   homeWhyTitle: string
   homeWhyBody: string
   homeTradeoffTitle: string
   homeTradeoffBody: string
   homePrivacyTitle: string
   homePrivacyBody: string
-  homeStart: string
 
   // Plate
   plateTitle: string
@@ -110,6 +124,10 @@ export interface Copy {
   timing: string
 
   // Shared
+  axisTime: string
+  axisPitch: string
+  quiet: string
+  loud: string
   privacyBadge: string
   units: { hz: string; db: string; ms: string; s: string; samples: string }
 }
@@ -119,7 +137,6 @@ const id: Copy = {
   otherLocaleName: 'English',
 
   title: 'Spectrogram',
-  tagline: 'Suara diurai menjadi frekuensinya, langsung, dengan transform yang ditulis sendiri.',
 
   navListen: 'Lihat suara',
   navBuild: 'Susun nada',
@@ -129,18 +146,44 @@ const id: Copy = {
   footerCredit:
     'Dibuat sebagai penjelasan, bukan produk. Transform-nya ditulis dari nol — Cooley & Tukey (1965), dan Harris (1978) untuk window function.',
 
-  homeLead:
-    'Bentuk gelombang menunjukkan kuat lemahnya suara. Ia tidak bisa menunjukkan nada — dengungan rendah dan siulan tinggi sama-sama hanya coretan. Fourier transform menjawab pertanyaan yang lain: frekuensi apa saja yang ada, dan sekuat apa.',
-  homeWhyTitle: 'Kenapa ditulis sendiri',
-  homeWhyBody:
-    'Browser menyediakan AnalyserNode, dan spectrogram di atasnya selesai dalam sepuluh baris. Yang dibangun di sini adalah transform-nya: radix-2 Cooley-Tukey, in-place, dengan twiddle factor dan bit-reversal yang dihitung di muka. Kebenarannya diuji terhadap DFT naif, identitas Parseval, round-trip, dan sinyal yang spektrumnya diketahui secara analitik.',
-  homeTradeoffTitle: 'Yang ingin diajarkan',
+  heroTitle: 'Lihat wujud sebuah suara',
+  heroLede:
+    'Setiap suara adalah tumpukan nada murni. Putar contoh di sini, atau bersiul ke mikrofon Anda, dan halaman ini akan memisahkan nada-nadanya lalu melukisnya begitu terdengar.',
+  heroCta: 'Mulai lihat suara',
+  heroSecondary: 'Cara membacanya',
+  heroCaption:
+    'Satu petikan senar gitar: nada dasarnya, dan overtone yang bertumpuk di atasnya. Setiap piksel di sini dihitung oleh transform milik halaman ini sendiri.',
+
+  readTitle: 'Cara membaca gambarnya',
+  readTimeTitle: 'Kiri ke kanan: waktu',
+  readTimeBody:
+    'Gambarnya dilukis satu kolom tipis sekali jalan, seperti seismograf. Tepi kanan adalah suara yang paling baru.',
+  readPitchTitle: 'Bawah ke atas: nada',
+  readPitchBody:
+    'Dengungan rendah berada di bawah, desis dan simbal di atas. Nada yang naik menggambar garis yang memanjat.',
+  readBrightTitle: 'Terang berarti keras',
+  readBrightBody:
+    'Pita terang berarti nada yang kuat; gelap berarti sunyi pada nada itu. Satu petikan gitar menggambar setumpuk garis — nada dasarnya, ditambah overtone di atasnya yang membuatnya terdengar seperti gitar dan bukan seruling.',
+
+  tryTitle: 'Tiga hal untuk dicoba',
+  tryListenBody:
+    'Putar petikan gitar, akor, ketukan drum, atau suara Anda sendiri, lalu lihat gambarnya terbentuk saat itu juga.',
+  tryBuildBody:
+    'Tumpuk nada murni dengan slider, dengarkan hasilnya, dan periksa bahwa gambarnya menemukan persis nada yang Anda masukkan.',
+  tryProofBody:
+    'Jalankan transform kami berdampingan dengan milik browser, dan lihat sendiri seberapa jauh kedua jawabannya berbeda.',
+
+  homeTradeoffTitle: 'Satu gagasan yang layak dibawa pulang',
   homeTradeoffBody:
-    'Resolusi waktu dan resolusi frekuensi tidak bisa tajam bersamaan. Untuk mengukur frekuensi rendah Anda harus mengamati beberapa siklusnya, jadi window harus panjang — tetapi semua isi window itu runtuh menjadi satu kolom. Perpendek window agar waktunya tajam, dan jarak bin melebar. Ini matematika yang sama dengan prinsip ketidakpastian Heisenberg, bukan keterbatasan teknik.',
-  homePrivacyTitle: 'Audio Anda tidak ke mana-mana',
+    'Anda tidak bisa tahu persis kapan sebuah suara terjadi dan persis nada apa itu, sekaligus. Mengukur nada rendah butuh waktu — beberapa siklusnya harus diamati — jadi makin tajam nadanya, makin kabur waktunya. Geser slider detail dan Anda bisa melihat gambarnya menukar yang satu dengan yang lain. Ini matematika yang sama dengan prinsip ketidakpastian Heisenberg, bukan keterbatasan halaman ini.',
+
+  homePrivacyTitle: 'Mikrofon Anda tidak meninggalkan halaman ini',
   homePrivacyBody:
-    'Tidak ada permintaan jaringan apa pun setelah halaman dimuat. Tidak ada analytics, tidak ada telemetry, tidak ada pelaporan error. Audio mikrofon diproses di dalam tab ini dan tidak pernah meninggalkan perangkat. Sample audio dibangkitkan oleh kode, bukan diunduh.',
-  homeStart: 'Buka plate',
+    'Setelah dimuat, halaman ini tidak melakukan permintaan jaringan apa pun — tanpa analytics, tanpa pelaporan error, tanpa apa pun. Suara diproses di dalam tab ini lalu dibuang. Contoh audionya dibangkitkan oleh kode, bukan diunduh, dan ada tes di repositori yang menggagalkan build jika satu saja panggilan jaringan ditambahkan.',
+
+  homeWhyTitle: 'Ditulis tangan, dengan sengaja',
+  homeWhyBody:
+    'Browser sudah menyediakan Fourier transform, dan spectrogram di atasnya selesai dalam sepuluh baris tanpa mengajarkan apa pun. Transform di sini ditulis dari nol — algoritma Cooley-Tukey yang sama dari 1965 — dan diperiksa dengan empat cara yang saling bebas: terhadap definisi bakunya, terhadap sebuah hukum kekekalan, dengan menjalankannya mundur, dan terhadap sinyal yang jawabannya sudah diketahui lebih dulu.',
 
   plateTitle: 'Plate',
   plateLead:
@@ -214,6 +257,10 @@ const id: Copy = {
   comparisonUnavailable: 'AnalyserNode tidak tersedia di browser ini.',
   timing: 'Waktu komputasi',
 
+  axisTime: 'Waktu \u2192',
+  axisPitch: '\u2191 Nada',
+  quiet: 'sunyi',
+  loud: 'keras',
   privacyBadge: 'Tidak ada jaringan',
   units: { hz: 'Hz', db: 'dB', ms: 'ms', s: 's', samples: 'sample' },
 }
@@ -223,7 +270,6 @@ const en: Copy = {
   otherLocaleName: 'Bahasa Indonesia',
 
   title: 'Spectrogram',
-  tagline: 'Sound decomposed into its frequencies, live, with the transform written from scratch.',
 
   navListen: 'See sound',
   navBuild: 'Build a sound',
@@ -233,18 +279,44 @@ const en: Copy = {
   footerCredit:
     'Built as an explanation, not a product. The transform is written from scratch — Cooley & Tukey (1965), and Harris (1978) for the windows.',
 
-  homeLead:
-    'A waveform shows loudness over time. It cannot show you pitch — a low hum and a high whistle are both squiggles. The Fourier transform answers the other question: which frequencies are present, and how strongly.',
-  homeWhyTitle: 'Why it is written by hand',
-  homeWhyBody:
-    'The browser provides AnalyserNode, and a spectrogram on top of it takes ten lines. What is built here is the transform itself: radix-2 Cooley-Tukey, in place, over precomputed twiddle factors and bit-reversal tables. Its correctness is checked against a naive DFT, Parseval’s identity, a round trip, and signals whose spectra are known analytically.',
-  homeTradeoffTitle: 'The idea worth teaching',
+  heroTitle: 'See what sound looks like',
+  heroLede:
+    'Every sound is a stack of pure tones. Play one of the samples, or whistle into your microphone, and watch this page pull the tones apart and paint them as they arrive.',
+  heroCta: 'Start listening',
+  heroSecondary: 'How to read it',
+  heroCaption:
+    'One plucked guitar string: the note itself, and the overtones stacked above it. Every pixel here was computed by this page\u2019s own transform.',
+
+  readTitle: 'How to read the picture',
+  readTimeTitle: 'Left to right is time',
+  readTimeBody:
+    'The picture is drawn one thin column at a time, the way a seismograph draws. The right-hand edge is the newest sound.',
+  readPitchTitle: 'Bottom to top is pitch',
+  readPitchBody:
+    'Low rumbles sit at the bottom, hiss and cymbals at the top. A note that slides upwards draws a line that climbs.',
+  readBrightTitle: 'Bright means loud',
+  readBrightBody:
+    'A bright band is a strong tone; dark is silence at that pitch. One plucked guitar string draws a whole stack of stripes \u2014 the note itself, plus the overtones above it that make it sound like a guitar and not a flute.',
+
+  tryTitle: 'Three things to try',
+  tryListenBody:
+    'Play a guitar note, a chord, a drum hit, or your own voice, and watch the picture build as it happens.',
+  tryBuildBody:
+    'Stack pure tones with sliders, hear the result, and check that the picture finds exactly the tones you put in.',
+  tryProofBody:
+    'Run our transform beside the browser\u2019s own on the same sound, and see for yourself how far apart the two answers are.',
+
+  homeTradeoffTitle: 'The one idea worth taking away',
   homeTradeoffBody:
-    'You cannot have sharp time resolution and sharp frequency resolution at once. To measure a low frequency you must observe several of its cycles, so the window must be long — but everything inside it collapses into one column. Shorten the window for sharper timing and bin spacing widens. This is the same mathematics as the Heisenberg uncertainty principle, not an engineering limitation.',
-  homePrivacyTitle: 'Your audio goes nowhere',
+    'You cannot know exactly when a sound happened and exactly what pitch it was, both at once. Measuring a low note takes time \u2014 you have to watch several of its cycles go by \u2014 so the sharper the pitch, the blurrier the timing. Drag the detail slider and you can watch the picture trade one for the other. It is the same mathematics as Heisenberg\u2019s uncertainty principle, not a limitation of this page.',
+
+  homePrivacyTitle: 'Your microphone never leaves this page',
   homePrivacyBody:
-    'There are no network requests of any kind after load. No analytics, no telemetry, no error reporting. Microphone audio is processed inside this tab and never leaves the device. The sample audio is generated by code rather than downloaded.',
-  homeStart: 'Open the plate',
+    'Once loaded, this page makes no network requests at all \u2014 no analytics, no error reporting, nothing. Sound is analysed inside this tab and thrown away. The sample sounds are generated by code rather than downloaded, and a test in the repository fails the build if a single network call is ever added.',
+
+  homeWhyTitle: 'Written by hand, on purpose',
+  homeWhyBody:
+    'Browsers already ship a Fourier transform, and a spectrogram built on top of it takes ten lines and teaches nobody anything. The transform here is written from scratch \u2014 the same Cooley-Tukey algorithm from 1965 \u2014 and checked four independent ways: against the textbook definition, against a conservation law, by running it backwards, and against signals whose answers are known in advance.',
 
   plateTitle: 'Plate',
   plateLead:
@@ -318,6 +390,10 @@ const en: Copy = {
   comparisonUnavailable: 'AnalyserNode is not available in this browser.',
   timing: 'Compute time',
 
+  axisTime: 'Time \u2192',
+  axisPitch: '\u2191 Pitch',
+  quiet: 'quiet',
+  loud: 'loud',
   privacyBadge: 'No network',
   units: { hz: 'Hz', db: 'dB', ms: 'ms', s: 's', samples: 'samples' },
 }

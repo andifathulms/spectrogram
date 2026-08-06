@@ -15,6 +15,20 @@ export function hz(value: number): string {
   return `${value.toFixed(2)} Hz`
 }
 
+/**
+ * Axis ticks only. They are round numbers by construction, so the extra digits
+ * hz() emits carry no information and cost the width the label needs to fit in
+ * the plate's gutter. The unit stays — invariant 10 has no exceptions.
+ */
+export function axisHz(value: number): string {
+  if (!Number.isFinite(value)) return '—'
+  if (Math.abs(value) >= 1000) {
+    const k = value / 1000
+    return `${Number.isInteger(k) ? k.toFixed(0) : k.toFixed(1)} kHz`
+  }
+  return `${value.toFixed(0)} Hz`
+}
+
 export function db(value: number): string {
   if (!Number.isFinite(value)) return '—'
   return `${value >= 0 ? '+' : ''}${value.toFixed(1)} dB`

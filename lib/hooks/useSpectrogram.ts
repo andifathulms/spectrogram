@@ -109,7 +109,18 @@ export function useSpectrogram(
         setClipped(batch.clipped)
 
         if (modeRef.current === 'sample') {
-          storeRef.current?.append(batch.columns, batch.count)
+          const store = storeRef.current
+          if (store === null) return
+          /*
+           * The worker restarts its column numbering at every `analyse`, so a
+           * batch that says it starts at zero is the start of a new picture.
+           * Following that rather than trusting the reset issued at call time
+           * is what stops a superseded analysis — a fast sample switch, or a
+           * double-invoked effect — from appending its columns on top of the
+           * analysis that replaced it, which drew the same sound twice.
+           */
+          if (batch.first === 0) store.reset()
+          store.append(batch.columns, batch.count)
           return
         }
 

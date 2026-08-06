@@ -68,6 +68,9 @@ worklets/
   analyser.worklet.ts       # the only runtime caller of lib/dsp
 data/
   samples/                  # bundled audio, license recorded
+public/
+  favicon.svg, icons/, social/   # from the brand kit; exports/ is gitignored
+  site.webmanifest          # static, relative URLs — basePath-independent
 tests/
   oracle/                   # FFT vs DFT
   analytic/                 # known-signal fixtures
@@ -131,6 +134,7 @@ tests/
 - Comments cite the algorithm or the published coefficient table they implement.
 - Signal-processing terms stay in English in code and UI; interface copy is Indonesian.
 - Sample audio carries a recorded licence in `data/samples/LICENSES.md`. Never bundle audio without one.
+- The brand kit lives in `exports/` and is **not committed**. Copy the sizes the app serves into `public/`, and anything the README shows into `docs/`. The mark's own colours are the app palette renamed — draw it in tokens, never in the kit's hex.
 - Tailwind utilities inline; semantic tokens in `tailwind.config.ts`. The instrument — `plate`, `emulsion`, `energyLow`, `energyMid`, `energyHigh`, `instrument`, `clip` — is normative and closed; the chrome around it is `surface`, `raised`, `hairline`, `ink`, `inkMuted`, `inkFaint`. Never raw hex in components. Canvas code cannot read a class, so it takes the same values from `lib/ui/colors`, and `tests/ui/tokens.test.ts` fails if the two drift.
 - Type is a scale, not a size per call site: `display-xl`, `display-lg`, `display-md`, `lede`, `body`, `caption`, `control-label`, `eyebrow`. Page width is the `shell` class; prose is capped at `max-w-readable`.
 - **No copy outside `lib/i18n`.** Not in `lib/dsp`, not in `data/`, not hard-coded in a component. Both dictionaries stay complete — `tests/ui/copy.test.ts` fails otherwise.
@@ -162,7 +166,7 @@ M0–M5 built, plus a full interface pass for a first-time visitor. 251 tests gr
 
 The product is named Spectrogram; English is the default locale and Bahasa Indonesia is complete beside it. Route slugs are English and locale-independent (`listen`, `build`, `proof`).
 
-Benchmark at the reference load (2048 points, 75% overlap, 48 kHz), on desktop: 0.096 ms/column, 111× real time, 0.6 B/column of heap growth over a minute.
+Benchmark at the reference load (2048 points, 75% overlap, 48 kHz), on desktop: ~0.10 ms/column, ~100× real time, 0.6 B/column of heap growth over a minute. The first two vary with the machine; the third does not, and is the one that matters.
 
 **Two deviations from the layout above, both deliberate:**
 

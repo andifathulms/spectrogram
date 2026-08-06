@@ -95,6 +95,8 @@ tests/
 
 9. **Zero network requests at runtime.** No fetch, no analytics, no error reporting, no font CDN at runtime, no remote sample loading. Everything is bundled. This is verified, not assumed.
 
+   The single exception is the maker's mark in the footer: four `<a href>` links to the author's own profiles. A link is not a request — nothing is fetched, and the browser resolves those addresses only when a visitor clicks and leaves. They are pinned by URL in both guards (`tests/privacy/no-network.test.ts` and `scripts/finalize-export.mjs`), which still fail on a `src`, a `<link href>`, a `url()`, an `@import` or an unpinned anchor, on any host. Absolute URLs remain forbidden in every other shipped file.
+
 10. **Every readout carries units.** Hz, dB, ms, bin index. A bare number in an instrument is a defect.
 
 11. **Tabular figures on every numeric readout.** Values change continuously; a readout that reflows as digits change is unreadable.

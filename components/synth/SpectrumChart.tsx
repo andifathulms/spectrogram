@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react'
 import { positionOf, type FrequencyScale } from '@/lib/dsp/scales'
 import { ENERGY_PALETTE, PALETTE_SIZE } from '@/lib/render/palette'
 import { frequencyTicks } from '@/components/plate/FrequencyAxis'
-import { hz as formatHz } from '@/lib/ui/format'
+import { axisHz } from '@/lib/ui/format'
 import { CANVAS } from '@/lib/ui/colors'
 
 interface Props {
@@ -113,17 +113,26 @@ export function SpectrumChart({
   return (
     <div>
       <canvas ref={canvasRef} className="block w-full" style={{ height }} />
-      <div className="relative mt-1 h-4">
-        {ticks.map((tick) => {
+      <div className="relative mt-1 h-4 px-3">
+        {ticks.map((tick, index) => {
           const t = positionOf(scale, tick, scale === 'linear' ? 0 : 20, fs / 2)
           if (t < 0 || t > 1) return null
+          /*
+           * A label centred on the first or last tick hangs off the chart and
+           * gets clipped by the card, so the ends are anchored inside instead
+           * of centred on their tick.
+           */
+          const first = index === 0
+          const last = index === ticks.length - 1
           return (
             <span
               key={tick}
-              className="tabular absolute -translate-x-1/2 text-[10px] text-inkFaint"
+              className={`tabular absolute whitespace-nowrap text-[10px] text-inkFaint ${
+                first ? '' : last ? '-translate-x-full' : '-translate-x-1/2'
+              }`}
               style={{ left: `${t * 100}%` }}
             >
-              {formatHz(tick)}
+              {axisHz(tick)}
             </span>
           )
         })}

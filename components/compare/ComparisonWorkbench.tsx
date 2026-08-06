@@ -59,61 +59,65 @@ export function ComparisonWorkbench({ copy }: { copy: Copy }) {
   }, [result])
 
   return (
-    <div className="space-y-6">
-      <p className="max-w-3xl border-l-2 border-instrument pl-3 text-sm leading-relaxed text-inkMuted">
-        {copy.comparisonHonest}
-      </p>
+    <div className="space-y-5">
+      <section className="card p-5">
+        <h2 className="display-md">{copy.comparisonHowTitle}</h2>
+        <p className="body mt-2 max-w-readable">{copy.comparisonHowBody}</p>
+        <p className="mt-4 max-w-readable border-l-2 border-instrument pl-3 text-sm leading-relaxed text-inkMuted">
+          {copy.comparisonHonest}
+        </p>
 
-      <div className="flex flex-wrap items-end gap-6">
-        <Field label={copy.windowSize} value={`${size} ${copy.units.samples}`}>
-          <Segmented
-            ariaLabel={copy.windowSize}
-            value={size}
-            onChange={setSize}
-            options={SIZES.map((value) => ({ value, label: value }))}
-          />
-        </Field>
-        <Button variant="primary" onClick={() => void run()} disabled={running}>
-          {copy.runComparison}
-        </Button>
-      </div>
+        <div className="mt-5 flex flex-wrap items-end gap-6">
+          <Field label={copy.windowSize} value={`${size} ${copy.units.samples}`}>
+            <Segmented
+              ariaLabel={copy.windowSize}
+              value={size}
+              onChange={setSize}
+              options={SIZES.map((value) => ({ value, label: value }))}
+            />
+          </Field>
+          <Button variant="primary" onClick={() => void run()} disabled={running}>
+            {running ? copy.comparisonRunning : copy.runComparison}
+          </Button>
+        </div>
 
-      {status !== null && (
-        <p className="border-l-2 border-clip pl-3 text-sm text-clip">{status}</p>
-      )}
+        {status !== null && (
+          <p className="mt-4 border-l-2 border-clip pl-3 text-sm text-clip">{status}</p>
+        )}
+      </section>
 
       {result !== null && (
         <>
-          <section className="grid grid-cols-2 gap-x-6 gap-y-3 rounded-sm border border-emulsion p-4 sm:grid-cols-3 lg:grid-cols-6">
+          <section className="card grid grid-cols-2 gap-x-6 gap-y-4 p-5 sm:grid-cols-3">
             <Readout label={copy.worstDifference} value={fmt.db(result.worstNearPeaksDb)} emphasis />
-            <Readout label={`${copy.difference} (mean)`} value={fmt.db(result.meanAbsDb)} />
-            <Readout label={`${copy.ours} — ${copy.timing}`} value={fmt.milliseconds(result.oursMs)} />
+            <Readout label={copy.meanDifference} value={fmt.db(result.meanAbsDb)} />
+            <Readout label={`${copy.timing}: ${copy.ours}`} value={fmt.milliseconds(result.oursMs)} />
             <Readout
-              label={`${copy.theirs} — ${copy.timing}`}
+              label={`${copy.timing}: ${copy.theirs}`}
               value={fmt.milliseconds(result.theirsMs)}
             />
             <Readout label={copy.bins} value={fmt.count(result.bins)} />
             <Readout label={copy.sampleRate} value={`${(result.fs / 1000).toFixed(3)} kHz`} />
           </section>
 
-          <section>
-            <div className="flex items-center gap-5 text-xs">
+          <section className="overflow-hidden rounded-card border border-hairline bg-plate">
+            <div className="flex flex-wrap items-center gap-5 border-b border-hairline px-3 py-2 text-sm">
               <span className="flex items-center gap-2 text-energyHigh">
-                <span className="block h-px w-5 bg-energyHigh" /> {copy.ours}
+                <span className="block h-0.5 w-5 bg-energyHigh" /> {copy.ours}
               </span>
               <span className="flex items-center gap-2 text-instrument">
                 <span className="block h-px w-5 bg-instrument" /> {copy.theirs}
               </span>
             </div>
-            <canvas ref={overlayRef} className="mt-2 block w-full" style={{ height: 280 }} />
-          </section>
+            <canvas ref={overlayRef} className="block w-full" style={{ height: 280 }} />
 
-          <section>
-            <h2 className="control-label">{copy.difference}</h2>
-            <canvas ref={deltaRef} className="mt-2 block w-full" style={{ height: 140 }} />
-            <p className="tabular mt-1 text-[10px] text-inkFaint">
-              0 Hz → {fmt.hz(result.fs / 2)}
-            </p>
+            <div className="border-y border-hairline px-3 py-2">
+              <span className="control-label">{copy.difference}</span>
+            </div>
+            <canvas ref={deltaRef} className="block w-full" style={{ height: 140 }} />
+            <div className="px-3 py-2">
+              <span className="tabular text-xs text-inkFaint">0 Hz → {fmt.hz(result.fs / 2)}</span>
+            </div>
           </section>
         </>
       )}

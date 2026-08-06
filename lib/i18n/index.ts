@@ -128,6 +128,8 @@ export interface Copy {
   addPartial: string
   removePartial: string
   partial: string
+  tonesTitle: string
+  recoveredNote: string
   amplitude: string
   phase: string
   roundTrip: string
@@ -148,6 +150,7 @@ export interface Copy {
   ours: string
   theirs: string
   difference: string
+  meanDifference: string
   worstDifference: string
   runComparison: string
   comparisonRunning: string
@@ -319,6 +322,9 @@ const en: Copy = {
   addPartial: 'Add a tone',
   removePartial: 'Remove',
   partial: 'Tone',
+  tonesTitle: 'Your tones',
+  recoveredNote:
+    'The strengths found come out a shade under the ones you set. That is not an error: a tone whose pitch falls between two bins is shared across both of them, so neither reads its full height. Land a tone exactly on a bin — 187.5 Hz here — and it comes back whole.',
   amplitude: 'Strength',
   phase: 'Phase',
   roundTrip: 'Does it come back?',
@@ -342,6 +348,7 @@ const en: Copy = {
   ours: 'Our FFT',
   theirs: 'The browser’s',
   difference: 'Difference per bin',
+  meanDifference: 'Mean difference',
   worstDifference: 'Worst difference',
   runComparison: 'Run the comparison',
   comparisonRunning: 'Running…',
@@ -513,6 +520,9 @@ const id: Copy = {
   addPartial: 'Tambah nada',
   removePartial: 'Hapus',
   partial: 'Nada',
+  tonesTitle: 'Nada Anda',
+  recoveredNote:
+    'Kekuatan yang ditemukan sedikit di bawah yang Anda atur. Itu bukan kesalahan: nada yang jatuh di antara dua bin terbagi ke keduanya, jadi tidak ada satu pun yang membaca tinggi penuhnya. Tempatkan nada persis di sebuah bin — 187,5 Hz di sini — dan angkanya kembali utuh.',
   amplitude: 'Kekuatan',
   phase: 'Fase',
   roundTrip: 'Apakah kembali utuh?',
@@ -536,6 +546,7 @@ const id: Copy = {
   ours: 'FFT kami',
   theirs: 'Milik browser',
   difference: 'Selisih per bin',
+  meanDifference: 'Selisih rata-rata',
   worstDifference: 'Selisih terbesar',
   runComparison: 'Jalankan perbandingan',
   comparisonRunning: 'Menjalankan…',

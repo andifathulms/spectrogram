@@ -9,12 +9,10 @@ export default function ComparisonPage({ params }: { params: { locale: string } 
   const copy = copyFor(params.locale)
 
   return (
-    <div className="mx-auto max-w-[1400px] px-5 py-8">
+    <div className="shell py-8 sm:py-10">
       <header className="mb-6">
-        <h1 className="font-display text-4xl text-energyHigh">{copy.comparisonTitle}</h1>
-        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-inkMuted">
-          {copy.comparisonLead}
-        </p>
+        <h1 className="display-lg">{copy.comparisonTitle}</h1>
+        <p className="lede mt-3 max-w-readable">{copy.comparisonLead}</p>
       </header>
 
       <ComparisonWorkbench copy={copy} />

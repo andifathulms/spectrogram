@@ -23,7 +23,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
         {copy.tagline}
       </h1>
 
-      <p className="mt-8 max-w-3xl text-lg leading-relaxed text-[#b3bdc7]">{copy.homeLead}</p>
+      <p className="mt-8 max-w-3xl text-lg leading-relaxed text-inkMuted">{copy.homeLead}</p>
 
       <div className="mt-10 flex flex-wrap items-center gap-6">
         <Link
@@ -39,7 +39,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
         {sections.map((section) => (
           <section key={section.title}>
             <h2 className="font-display text-2xl text-energyHigh">{section.title}</h2>
-            <p className="mt-3 text-sm leading-relaxed text-[#9aa6b2]">{section.body}</p>
+            <p className="mt-3 text-sm leading-relaxed text-inkMuted">{section.body}</p>
           </section>
         ))}
       </div>

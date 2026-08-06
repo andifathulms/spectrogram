@@ -12,7 +12,7 @@ export default function SynthesisPage({ params }: { params: { locale: string } }
     <div className="mx-auto max-w-[1400px] px-5 py-8">
       <header className="mb-6">
         <h1 className="font-display text-4xl text-energyHigh">{copy.synthesisTitle}</h1>
-        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[#9aa6b2]">
+        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-inkMuted">
           {copy.synthesisLead}
         </p>
       </header>

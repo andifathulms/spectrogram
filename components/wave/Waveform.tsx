@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { CANVAS } from '@/lib/ui/colors'
 
 interface Props {
   samples: Float32Array | null
@@ -44,11 +45,11 @@ export function Waveform({
       canvas.height = pixelHeight
     }
 
-    ctx.fillStyle = '#14171A'
+    ctx.fillStyle = CANVAS.plate
     ctx.fillRect(0, 0, width, pixelHeight)
 
     // Zero line, in emulsion — structure, not data.
-    ctx.strokeStyle = '#2A3138'
+    ctx.strokeStyle = CANVAS.emulsion
     ctx.lineWidth = 1
     ctx.beginPath()
     ctx.moveTo(0, pixelHeight / 2)
@@ -60,7 +61,7 @@ export function Waveform({
     const mid = pixelHeight / 2
     const columns = Math.min(width, 4096)
 
-    ctx.strokeStyle = '#8b97a3'
+    ctx.strokeStyle = CANVAS.inkMuted
     ctx.beginPath()
     for (let x = 0; x < columns; x++) {
       const from = Math.floor((x * samples.length) / columns)

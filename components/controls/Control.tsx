@@ -18,7 +18,7 @@ export function Field({ label, help, value, children }: FieldProps) {
         {value !== undefined && <span className="tabular text-sm text-instrument">{value}</span>}
       </div>
       <div className="mt-1.5">{children}</div>
-      {help !== undefined && <p className="mt-1.5 text-xs leading-snug text-[#6f7c88]">{help}</p>}
+      {help !== undefined && <p className="mt-1.5 text-xs leading-snug text-inkFaint">{help}</p>}
     </div>
   )
 }
@@ -45,7 +45,7 @@ export function Segmented<T extends string>({ options, value, onChange, ariaLabe
             className={`cursor-pointer border px-2.5 py-1 text-xs ${
               active
                 ? 'border-instrument text-instrument'
-                : 'border-emulsion text-[#8b97a3] hover:text-energyHigh'
+                : 'border-emulsion text-inkMuted hover:text-energyHigh'
             }`}
           >
             <input
@@ -87,7 +87,7 @@ export function Slider({ min, max, step = 1, value, onChange, ariaLabel, ticks }
         onChange={(event) => onChange(Number(event.target.value))}
       />
       {ticks !== undefined && (
-        <div className="tabular flex justify-between text-[10px] text-[#5c6874]">
+        <div className="tabular flex justify-between text-[10px] text-inkFaint">
           {ticks.map((tick) => (
             <span key={tick}>{tick}</span>
           ))}
@@ -111,7 +111,7 @@ export function Button({
   const styles =
     variant === 'primary'
       ? 'border-instrument text-instrument hover:bg-instrument hover:text-plate'
-      : 'border-emulsion text-[#b3bdc7] hover:border-instrument hover:text-instrument'
+      : 'border-emulsion text-inkMuted hover:border-instrument hover:text-instrument'
 
   return (
     <button

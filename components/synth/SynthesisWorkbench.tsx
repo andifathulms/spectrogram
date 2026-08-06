@@ -122,7 +122,7 @@ export function SynthesisWorkbench({ copy }: { copy: Copy }) {
                   </span>
                   <button
                     type="button"
-                    className="text-xs text-[#6f7c88] hover:text-clip"
+                    className="text-xs text-inkFaint hover:text-clip"
                     onClick={() => setPartials((c) => c.filter((_, i) => i !== index))}
                   >
                     {copy.removePartial}
@@ -246,7 +246,7 @@ export function SynthesisWorkbench({ copy }: { copy: Copy }) {
 
         <div>
           <h2 className="control-label">{copy.roundTrip}</h2>
-          <p className="mt-1 text-xs leading-relaxed text-[#6f7c88]">{copy.roundTripHelp}</p>
+          <p className="mt-1 text-xs leading-relaxed text-inkFaint">{copy.roundTripHelp}</p>
 
           <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3">
             <Readout
@@ -260,7 +260,7 @@ export function SynthesisWorkbench({ copy }: { copy: Copy }) {
 
           <table className="tabular mt-4 w-full text-xs">
             <thead>
-              <tr className="text-left text-[#6f7c88]">
+              <tr className="text-left text-inkFaint">
                 <th className="py-1 font-normal">{copy.frequency}</th>
                 <th className="py-1 font-normal">{copy.expected}</th>
                 <th className="py-1 font-normal">{copy.recovered}</th>

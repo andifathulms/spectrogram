@@ -10,6 +10,7 @@ import type { Copy } from '@/lib/i18n'
 
 import { Button, Field, Segmented } from '@/components/controls/Control'
 import { Readout } from '@/components/ui/Readout'
+import { CANVAS } from '@/lib/ui/colors'
 
 const SIZES = FFT_SIZES.filter((N) => N >= 512 && N <= 8192).map(String)
 
@@ -59,7 +60,7 @@ export function ComparisonWorkbench({ copy }: { copy: Copy }) {
 
   return (
     <div className="space-y-6">
-      <p className="max-w-3xl border-l-2 border-instrument pl-3 text-sm leading-relaxed text-[#b3bdc7]">
+      <p className="max-w-3xl border-l-2 border-instrument pl-3 text-sm leading-relaxed text-inkMuted">
         {copy.comparisonHonest}
       </p>
 
@@ -110,7 +111,7 @@ export function ComparisonWorkbench({ copy }: { copy: Copy }) {
           <section>
             <h2 className="control-label">{copy.difference}</h2>
             <canvas ref={deltaRef} className="mt-2 block w-full" style={{ height: 140 }} />
-            <p className="tabular mt-1 text-[10px] text-[#5c6874]">
+            <p className="tabular mt-1 text-[10px] text-inkFaint">
               0 Hz → {fmt.hz(result.fs / 2)}
             </p>
           </section>
@@ -128,7 +129,7 @@ function prepare(canvas: HTMLCanvasElement, height: number): CanvasRenderingCont
   canvas.width = Math.max(1, Math.round(canvas.clientWidth * dpr))
   canvas.height = Math.max(1, Math.round(height * dpr))
 
-  ctx.fillStyle = '#14171A'
+  ctx.fillStyle = CANVAS.plate
   ctx.fillRect(0, 0, canvas.width, canvas.height)
   return ctx
 }
@@ -141,7 +142,7 @@ function drawSpectra(canvas: HTMLCanvasElement, result: ComparisonResult): void 
   const minDb = -180
   const maxDb = 0
 
-  ctx.strokeStyle = '#2A3138'
+  ctx.strokeStyle = CANVAS.emulsion
   for (let db = minDb; db <= maxDb; db += 30) {
     const y = ((maxDb - db) / (maxDb - minDb)) * height
     ctx.beginPath()
@@ -167,8 +168,8 @@ function drawSpectra(canvas: HTMLCanvasElement, result: ComparisonResult): void 
 
   // Ours underneath in the ramp's brightest tone, theirs over it in cyan, so
   // where they agree the cyan simply covers the pale line.
-  trace(result.ours, '#F5E9D0', 2.5)
-  trace(result.theirs, '#5FA8B5', 1)
+  trace(result.ours, CANVAS.energyHigh, 2.5)
+  trace(result.theirs, CANVAS.instrument, 1)
 }
 
 function drawDifference(canvas: HTMLCanvasElement, result: ComparisonResult): void {
@@ -179,13 +180,13 @@ function drawDifference(canvas: HTMLCanvasElement, result: ComparisonResult): vo
   const scale = Math.max(result.worstNearPeaksDb, 0.1) * 1.2
   const mid = height / 2
 
-  ctx.strokeStyle = '#2A3138'
+  ctx.strokeStyle = CANVAS.emulsion
   ctx.beginPath()
   ctx.moveTo(0, mid)
   ctx.lineTo(width, mid)
   ctx.stroke()
 
-  ctx.strokeStyle = '#5FA8B5'
+  ctx.strokeStyle = CANVAS.instrument
   ctx.lineWidth = 1
   ctx.beginPath()
   for (let k = 0; k < result.difference.length; k++) {
@@ -196,7 +197,7 @@ function drawDifference(canvas: HTMLCanvasElement, result: ComparisonResult): vo
   }
   ctx.stroke()
 
-  ctx.fillStyle = '#8b97a3'
+  ctx.fillStyle = CANVAS.inkMuted
   ctx.font = `${11 * (window.devicePixelRatio || 1)}px monospace`
   ctx.fillText(`±${scale.toFixed(2)} dB`, 6, 14 * (window.devicePixelRatio || 1))
 }

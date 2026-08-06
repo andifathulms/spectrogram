@@ -207,7 +207,7 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
           onCursor={setCursor}
         />
         <div className="flex flex-wrap items-center justify-between gap-4 border-t border-emulsion px-[68px] py-2">
-          <span className="tabular text-[10px] text-[#5c6874]">
+          <span className="tabular text-[10px] text-inkFaint">
             {mode === 'sample'
               ? `0 ${copy.units.s} → ${duration.toFixed(2)} ${copy.units.s}`
               : `−${duration.toFixed(1)} ${copy.units.s} → 0 ${copy.units.s}`}
@@ -238,7 +238,7 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
           <div>
             <div className="control-label">{copy.clipping}</div>
             <div
-              className={`tabular mt-0.5 text-sm ${spectrogram.clipped ? 'text-clip' : 'text-[#4b5661]'}`}
+              className={`tabular mt-0.5 text-sm ${spectrogram.clipped ? 'text-clip' : 'text-inkFaint'}`}
             >
               {spectrogram.clipped ? copy.clipping : '—'}
             </div>
@@ -292,7 +292,7 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
               title: WINDOW_LABELS[kind],
             }))}
           />
-          <p className="mt-2 text-xs text-[#8b97a3]">{WINDOW_LABELS[windowKind]}</p>
+          <p className="mt-2 text-xs text-inkMuted">{WINDOW_LABELS[windowKind]}</p>
         </Field>
 
         <Field label={copy.frequencyScale} help={copy.frequencyScaleHelp}>
@@ -338,14 +338,14 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
                 className={`border px-2.5 py-1 text-xs ${
                   mode === 'sample' && entry.id === sampleId
                     ? 'border-instrument text-instrument'
-                    : 'border-emulsion text-[#8b97a3] hover:text-energyHigh'
+                    : 'border-emulsion text-inkMuted hover:text-energyHigh'
                 }`}
               >
                 {entry.label}
               </button>
             ))}
           </div>
-          <p className="mt-2 max-w-2xl text-xs leading-relaxed text-[#8b97a3]">{sample.hint}</p>
+          <p className="mt-2 max-w-2xl text-xs leading-relaxed text-inkMuted">{sample.hint}</p>
 
           <div className="mt-4 flex flex-wrap items-center gap-3">
             {!audioReady && (
@@ -367,7 +367,7 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
           </div>
 
           {micStatus !== null && (
-            <p className="mt-3 max-w-2xl border-l-2 border-clip pl-3 text-xs leading-relaxed text-[#b3bdc7]">
+            <p className="mt-3 max-w-2xl border-l-2 border-clip pl-3 text-xs leading-relaxed text-inkMuted">
               {micStatus}
             </p>
           )}

@@ -14,7 +14,13 @@
   html,
   body {
     background-color: theme('colors.plate');
-    color: #d7dde3;
+    color: theme('colors.ink');
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Nothing on this site is wider than the viewport. */
+    overflow-x: hidden;
   }
 
   body {
@@ -32,10 +38,52 @@
   :focus-visible {
     outline: 2px solid theme('colors.instrument');
     outline-offset: 2px;
+    border-radius: 2px;
   }
 }
 
 @layer components {
+  /*
+   * One type scale, fluid between phone and desktop, so a heading is chosen by
+   * rank rather than by picking a pixel size at each call site. The display
+   * serif carries every heading; the sans carries everything read at length.
+   */
+  .display-xl {
+    @apply font-display text-ink;
+    font-size: clamp(2.5rem, 1.6rem + 4.2vw, 5rem);
+    line-height: 1.03;
+    letter-spacing: -0.015em;
+  }
+
+  .display-lg {
+    @apply font-display text-ink;
+    font-size: clamp(1.9rem, 1.4rem + 2.2vw, 3rem);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  .display-md {
+    @apply font-display text-ink;
+    font-size: clamp(1.35rem, 1.15rem + 0.9vw, 1.75rem);
+    line-height: 1.2;
+  }
+
+  .lede {
+    @apply text-inkMuted;
+    font-size: clamp(1.05rem, 0.99rem + 0.3vw, 1.25rem);
+    line-height: 1.65;
+  }
+
+  .body {
+    @apply text-inkMuted;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+
+  .caption {
+    @apply text-sm leading-relaxed text-inkFaint;
+  }
+
   /*
    * Invariant 11. Applied to every numeric readout, without exception —
    * values change continuously and a readout that reflows is unreadable.
@@ -47,54 +95,88 @@
   }
 
   .rule {
-    border-color: theme('colors.emulsion');
+    border-color: theme('colors.hairline');
   }
 
   .control-label {
-    @apply text-xs uppercase tracking-[0.14em] text-[#8b97a3];
+    @apply text-[0.6875rem] uppercase tracking-[0.14em] text-inkFaint;
+  }
+
+  .eyebrow {
+    @apply text-xs uppercase tracking-[0.18em] text-instrument;
+  }
+
+  /* The page's one container. Everything sits inside it. */
+  .shell {
+    @apply mx-auto w-full max-w-shell px-5 sm:px-7;
+  }
+
+  .card {
+    @apply rounded-card border border-hairline bg-surface;
   }
 }
 
 /*
  * Range inputs are the primary control in this app — the tradeoff slider is
  * meant to be the first thing a visitor touches — so they are styled rather
- * than left to the browser.
+ * than left to the browser. The track is thin because it is a scale; the thumb
+ * is large because it is a target, and 20px plus padding clears the 44px
+ * touch minimum once the row's own height is counted.
  */
 input[type='range'] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 1.5rem;
+  height: 2.25rem;
   background: transparent;
   cursor: pointer;
+  touch-action: pan-y;
 }
 
 input[type='range']::-webkit-slider-runnable-track {
-  height: 2px;
+  height: 3px;
+  border-radius: 3px;
   background: theme('colors.emulsion');
 }
 
 input[type='range']::-moz-range-track {
-  height: 2px;
+  height: 3px;
+  border-radius: 3px;
   background: theme('colors.emulsion');
 }
 
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 14px;
-  height: 14px;
-  margin-top: -6px;
+  width: 20px;
+  height: 20px;
+  margin-top: -8.5px;
+  border: 3px solid theme('colors.plate');
+  border-radius: 9999px;
+  background: theme('colors.instrument');
+  transition: transform 120ms ease;
+}
+
+input[type='range']::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 3px solid theme('colors.plate');
   border-radius: 9999px;
   background: theme('colors.instrument');
 }
 
-input[type='range']::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
-  border: none;
-  border-radius: 9999px;
-  background: theme('colors.instrument');
+input[type='range']:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+
+/* Native marker removed: the disclosures draw their own. */
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary {
+  list-style: none;
+  cursor: pointer;
 }
 
 /*
@@ -102,6 +184,10 @@ input[type='range']::-moz-range-thumb {
  * not decoration. Nothing else animates, and even that stops on request.
  */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {

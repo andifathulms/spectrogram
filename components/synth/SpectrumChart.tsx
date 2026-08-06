@@ -6,6 +6,7 @@ import { positionOf, type FrequencyScale } from '@/lib/dsp/scales'
 import { ENERGY_PALETTE, PALETTE_SIZE } from '@/lib/render/palette'
 import { frequencyTicks } from '@/components/plate/FrequencyAxis'
 import { hz as formatHz } from '@/lib/ui/format'
+import { CANVAS } from '@/lib/ui/colors'
 
 interface Props {
   /** One-sided amplitude spectrum. */
@@ -50,14 +51,14 @@ export function SpectrumChart({
       canvas.height = pixelHeight
     }
 
-    ctx.fillStyle = '#14171A'
+    ctx.fillStyle = CANVAS.plate
     ctx.fillRect(0, 0, width, pixelHeight)
 
     const nyquist = fs / 2
     const minHz = scale === 'linear' ? 0 : 20
 
     // Grid, in emulsion. Structure, never data.
-    ctx.strokeStyle = '#2A3138'
+    ctx.strokeStyle = CANVAS.emulsion
     ctx.lineWidth = 1
     for (let db = minDb; db <= maxDb; db += 20) {
       const y = ((maxDb - db) / (maxDb - minDb)) * pixelHeight
@@ -119,7 +120,7 @@ export function SpectrumChart({
           return (
             <span
               key={tick}
-              className="tabular absolute -translate-x-1/2 text-[10px] text-[#5c6874]"
+              className="tabular absolute -translate-x-1/2 text-[10px] text-inkFaint"
               style={{ left: `${t * 100}%` }}
             >
               {formatHz(tick)}

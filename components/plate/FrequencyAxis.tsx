@@ -47,7 +47,7 @@ export function FrequencyAxis({ scale, minHz, maxHz, height }: Props) {
             className="absolute right-1.5 flex -translate-y-1/2 items-center gap-1.5"
             style={{ top }}
           >
-            <span className="tabular text-[10px] leading-none text-[#8b97a3]">
+            <span className="tabular text-[10px] leading-none text-inkMuted">
               {formatHz(tick)}
             </span>
             <span className="block h-px w-1.5 bg-emulsion" />

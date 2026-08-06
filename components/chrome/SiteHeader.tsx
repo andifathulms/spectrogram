@@ -42,7 +42,7 @@ export function SiteHeader({ locale, copy }: Props) {
                 className={
                   active
                     ? 'text-instrument underline underline-offset-4'
-                    : 'text-[#8b97a3] hover:text-energyHigh'
+                    : 'text-inkMuted hover:text-energyHigh'
                 }
               >
                 {link.label}
@@ -52,10 +52,10 @@ export function SiteHeader({ locale, copy }: Props) {
         </nav>
 
         <div className="ml-auto flex items-center gap-4 text-xs">
-          <span className="tabular rounded-sm border border-emulsion px-2 py-1 text-[#8b97a3]">
+          <span className="tabular rounded-sm border border-emulsion px-2 py-1 text-inkMuted">
             {copy.privacyBadge}
           </span>
-          <Link href={swapped} className="text-[#8b97a3] hover:text-energyHigh">
+          <Link href={swapped} className="text-inkMuted hover:text-energyHigh">
             {copy.otherLocaleName}
           </Link>
         </div>

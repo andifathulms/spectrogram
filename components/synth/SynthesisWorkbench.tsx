@@ -298,7 +298,11 @@ export function SynthesisWorkbench({ copy }: { copy: Copy }) {
         </div>
       </Disclosure>
 
-      {fault !== null && <p className="border-l-2 border-clip pl-3 text-sm text-clip">{fault}</p>}
+      {fault !== null && (
+        <p role="alert" className="border-l-2 border-clip pl-3 text-sm text-clip">
+          {fault}
+        </p>
+      )}
     </div>
   )
 }

@@ -263,12 +263,15 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
         </div>
 
         {micStatus !== null && (
-          <p className="mt-4 max-w-readable border-l-2 border-clip pl-3 text-sm leading-relaxed text-inkMuted">
+          <p
+            role="status"
+            className="mt-4 max-w-readable border-l-2 border-clip pl-3 text-sm leading-relaxed text-inkMuted"
+          >
             {micStatus}
           </p>
         )}
         {spectrogram.fault !== null && (
-          <p className="mt-4 max-w-readable border-l-2 border-clip pl-3 text-sm text-clip">
+          <p role="alert" className="mt-4 max-w-readable border-l-2 border-clip pl-3 text-sm text-clip">
             {spectrogram.fault}
           </p>
         )}

@@ -381,14 +381,16 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
         </div>
 
         <div className="mt-5">
-          <Slider
-            min={0}
-            max={SIZES.length - 1}
-            value={sizeIndex}
-            onChange={setSizeIndex}
-            ariaLabel={copy.windowSize}
-            ticks={[copy.detailSharpTiming, copy.detailFinePitch]}
-          />
+          <Field label={copy.windowSize} value={`${N} ${copy.units.samples}`}>
+            <Slider
+              min={0}
+              max={SIZES.length - 1}
+              value={sizeIndex}
+              onChange={setSizeIndex}
+              ariaLabel={copy.windowSize}
+              ticks={[copy.detailSharpTiming, copy.detailFinePitch]}
+            />
+          </Field>
         </div>
 
         <div className="mt-4 grid gap-4 sm:grid-cols-2">

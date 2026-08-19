@@ -20,3 +20,15 @@ export const CANVAS = {
   energyHigh: '#F5E9D0',
   clip: '#C4453A',
 } as const
+
+/**
+ * A CANVAS colour at reduced alpha, as an rgba() string, for canvas
+ * fillStyle/strokeStyle. Keeps translucent annotation strokes tied to the
+ * same hex the opaque draws use, instead of a second, hand-typed rgba().
+ */
+export function withAlpha(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`
+}

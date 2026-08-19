@@ -6,7 +6,7 @@ import { positionOf, type FrequencyScale } from '@/lib/dsp/scales'
 import { ENERGY_PALETTE, PALETTE_SIZE } from '@/lib/render/palette'
 import { frequencyTicks } from '@/components/plate/FrequencyAxis'
 import { axisHz } from '@/lib/ui/format'
-import { CANVAS } from '@/lib/ui/colors'
+import { CANVAS, withAlpha } from '@/lib/ui/colors'
 
 interface Props {
   /** One-sided amplitude spectrum. */
@@ -71,7 +71,7 @@ export function SpectrumChart({
     if (amplitude === null) return
 
     // Where the user's requested frequencies land — annotation layer, cyan.
-    ctx.strokeStyle = 'rgba(95, 168, 181, 0.45)'
+    ctx.strokeStyle = withAlpha(CANVAS.instrument, 0.45)
     for (const target of expected) {
       const x = positionOf(scale, target, minHz, nyquist) * width
       ctx.beginPath()

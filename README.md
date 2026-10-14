@@ -7,13 +7,13 @@
 [**Open the live site →**](https://andifathulms.github.io/spectrogram/)
 
 [![Build and deploy](https://github.com/andifathulms/spectrogram/actions/workflows/deploy.yml/badge.svg)](https://github.com/andifathulms/spectrogram/actions/workflows/deploy.yml)
-![256 tests](https://img.shields.io/badge/tests-256%20passing-6FB9B4)
+![358 tests](https://img.shields.io/badge/tests-358%20passing-6FB9B4)
 ![No DSP dependency](https://img.shields.io/badge/DSP%20dependencies-none-D9954B)
 ![No network at runtime](https://img.shields.io/badge/network%20requests%20at%20runtime-zero-3A5A86)
 
 </div>
 
-<img src="docs/screens/plate.png" alt="The plate: a plucked guitar string as a waveform above, and as a spectrogram below, with its harmonic stack visible" width="100%">
+<img src="docs/screens/plate.png" alt="The plate: a plucked guitar string as a waveform above and a spectrogram below, with the sound picker and the Detail control in a rail beside it" width="100%">
 
 A static site. No backend, no accounts, and no network requests at runtime.
 
@@ -46,12 +46,12 @@ This is the same mathematics as the Heisenberg uncertainty principle, not an eng
 
 | Path | |
 |---|---|
-| `/[locale]/` | The explanation. A live spectrogram of a bundled sample, then how to read its three axes. |
-| `/[locale]/listen` | The plate. Spectrogram, waveform with the analysis-window bracket, hover readout, and the tradeoff as three named positions over the window-size slider. |
+| `/[locale]/` | The explanation. A full-width live spectrogram that teaches itself with numbered markers, then the tradeoff as one sound at three window sizes, side by side. |
+| `/[locale]/listen` | The plate. Waveform and spectrogram as one instrument, with the analysis-window bracket and a hover readout on it; the source and the Detail control in a rail beside it. |
 | `/[locale]/build` | Stack pure tones and watch the spectrum recover exactly what you put in, with the round-trip residual on screen. |
 | `/[locale]/proof` | Our FFT against `AnalyserNode`, same input, per-bin difference and timings for both. |
 
-<img src="docs/screens/home.png" alt="The landing page: a live spectrogram of a guitar sample beside the heading “See what sound looks like”" width="100%">
+<img src="docs/screens/home.png" alt="The landing page: the heading “See what sound looks like” above a full-width live spectrogram of a guitar string, with three numbered markers and their legend" width="100%">
 
 <img src="docs/screens/build.png" alt="Build a sound: three tones stacked with sliders, the wave they make, and the spectrum the transform recovers from it" width="100%">
 

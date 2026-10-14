@@ -32,6 +32,7 @@ pnpm test                   # vitest watch
 pnpm test:run               # vitest once — before every commit
 pnpm test:dsp               # DFT oracle, Parseval, round-trip, analytic fixtures
 pnpm bench:fft              # throughput + heap-growth benchmark
+pnpm thumbs                 # regenerate public/thumbs/ from lib/dsp after a sample, ramp or scale change
 pnpm typecheck
 pnpm lint
 ```
@@ -135,8 +136,8 @@ tests/
 - Signal-processing terms stay in English in code and UI; interface copy is Indonesian.
 - Sample audio carries a recorded licence in `data/samples/LICENSES.md`. Never bundle audio without one.
 - The brand kit lives in `exports/` and is **not committed**. Copy the sizes the app serves into `public/`, and anything the README shows into `docs/`. The mark's own colours are the app palette renamed — draw it in tokens, never in the kit's hex.
-- Tailwind utilities inline; semantic tokens in `tailwind.config.ts`. The instrument — `plate`, `emulsion`, `energyLow`, `energyMid`, `energyHigh`, `instrument`, `clip` — is normative and closed; the chrome around it is `surface`, `raised`, `hairline`, `ink`, `inkMuted`, `inkFaint`. Never raw hex in components. Canvas code cannot read a class, so it takes the same values from `lib/ui/colors`, and `tests/ui/tokens.test.ts` fails if the two drift.
-- Type is a scale, not a size per call site: `display-xl`, `display-lg`, `display-md`, `lede`, `body`, `caption`, `control-label`, `eyebrow`. Page width is the `shell` class; prose is capped at `max-w-readable`.
+- Tailwind utilities inline; semantic tokens in `tailwind.config.ts`. The instrument — `plate`, `emulsion`, `energyLow`, `energyMid`, `energyHigh`, `instrument`, `clip` — is normative and closed; the chrome around it is `void` (the page ground, darker than `plate`), `raised`, `hairline`, `ink`, `inkMuted`, `inkFaint`. Instruments are glass (`.card`: `plate` on `void`, `shadow-glass`); prose sits on the ground. Primary actions are `energyHigh` with `plate` text — cyan never marks something to press. Never raw hex in components. Canvas code cannot read a class, so it takes the same values from `lib/ui/colors`, and `tests/ui/tokens.test.ts` fails if the two drift.
+- Type is a scale, not a size per call site: `display-xl`, `display-lg`, `display-md`, `lede`, `body`, `caption`, `control-label`, `eyebrow`. Labels are sentence case. A headline may carry one italic word, marked `*like this*` in the dictionary and rendered by `components/ui/Emphasis`. Readouts go through `components/ui/Quantity`, which sets the number in IBM Plex Mono medium and the unit after it, quieter. Page width is the `shell` class; prose is capped at `max-w-readable`.
 - **No copy outside `lib/i18n`.** Not in `lib/dsp`, not in `data/`, not hard-coded in a component. Both dictionaries stay complete — `tests/ui/copy.test.ts` fails otherwise.
 - **Plain word first, technical term behind it.** The interface says "Detail"; "window size" waits in the advanced disclosure. Anything a first-time visitor does not need to read the picture goes inside a `<details>`, never removed.
 
@@ -162,7 +163,7 @@ The site states plainly that microphone audio never leaves the device, that ther
 
 ## Current state
 
-M0–M5 built, plus a full interface pass for a first-time visitor. 251 tests green; `pnpm test:dsp`, `pnpm bench:fft`, `pnpm typecheck`, `pnpm lint` and `pnpm build` all pass.
+M0–M5 built, plus two interface passes: one for a first-time visitor, and a visual redesign (glass instruments on a darker ground, the tradeoff as three plates on the home page, a controls rail on Listen, a bottom tab bar on phones). 358 tests green; `pnpm test:dsp`, `pnpm bench:fft`, `pnpm typecheck`, `pnpm lint` and `pnpm build` all pass.
 
 The product is named Spectrogram; English is the default locale and Bahasa Indonesia is complete beside it. Route slugs are English and locale-independent (`listen`, `build`, `proof`).
 
@@ -171,7 +172,8 @@ Benchmark at the reference load (2048 points, 75% overlap, 48 kHz), on desktop: 
 **Two deviations from the layout above, both deliberate:**
 
 - Analysis runs in `workers/analyser.worker.ts`, not in an AudioWorklet. An AudioWorklet module cannot reliably use ES imports, so the FFT there would have to be a second, inlined copy of `lib/dsp` — untested by the correctness suites, and precisely the failure mode this project exists to rule out. `public/worklets/tap.worklet.js` is a pure capture tap that computes nothing, with a ScriptProcessor fallback. Invariant 7 holds on both paths.
-- `lib/hooks/` and `lib/ui/` exist alongside the directories listed above, holding the plate's orchestration hook and readout formatting. Nothing is computed in a component (invariant 15).
+- `lib/hooks/` and `lib/ui/` exist alongside the directories listed above, holding the plate's orchestration hook, readout formatting, and annotation geometry (marker positions, the window's drawn width, the Detail blur bars). Nothing is computed in a component (invariant 15).
+- Sample thumbnails in `public/thumbs/` are PNGs committed to the repo, produced by `lib/render/thumbnail` (the worker's pipeline, run synchronously). `tests/render/thumbnails.test.ts` fails when they no longer match what the transform draws; `pnpm thumbs` regenerates them.
 
 **Outstanding:**
 

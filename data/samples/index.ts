@@ -197,6 +197,39 @@ function drumHit(fs: number, seconds: number): Float32Array {
   return out
 }
 
+/**
+ * The tradeoff in one signal: two steady tones a little over 100 Hz apart,
+ * and a sharp click every half second. A short window draws each click as a
+ * thin vertical line and blurs the tones into one band; a long window splits
+ * the tones into two clean lines and smears every click across its own
+ * length. No window gets both — that is the lesson (PRD §2).
+ */
+function tonesAndClicks(fs: number, seconds: number): Float32Array {
+  const out = new Float32Array(Math.floor(fs * seconds))
+  const tones = [440, 554.365] // A4 and C#5
+
+  for (const frequency of tones) {
+    for (let n = 0; n < out.length; n++) {
+      out[n] += 0.32 * Math.sin((2 * Math.PI * frequency * n) / fs)
+    }
+  }
+
+  // A click is a short decaying burst of alternating sign: about a
+  // millisecond long, so its energy reaches far up the spectrum.
+  const next = rng(0xc11c)
+  for (let at = 0.25; at < seconds - 0.1; at += 0.5) {
+    const start = Math.floor(at * fs)
+    const length = Math.floor(fs * 0.001)
+    for (let n = 0; n < length; n++) {
+      out[start + n] += (n % 2 === 0 ? 1 : -1) * (0.7 + 0.3 * next()) * Math.exp(-n / (length / 4))
+    }
+  }
+
+  applyFades(out, fs, 0.02)
+  normalise(out)
+  return out
+}
+
 export const SAMPLES: readonly SampleDefinition[] = [
   {
     id: 'senar-gitar',
@@ -217,6 +250,11 @@ export const SAMPLES: readonly SampleDefinition[] = [
     id: 'akor',
     seconds: 3,
     render: chord,
+  },
+  {
+    id: 'nada-dan-klik',
+    seconds: 2.5,
+    render: tonesAndClicks,
   },
   {
     id: 'ketukan',

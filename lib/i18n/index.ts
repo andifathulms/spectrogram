@@ -242,6 +242,10 @@ const en: Copy = {
       label: 'C major chord',
       hint: 'Three notes at once, so three stacks side by side. Move detail towards fine pitch to pull them apart.',
     },
+    'nada-dan-klik': {
+      label: 'Two tones and clicks',
+      hint: 'Two steady notes close together, and a click every half second. No detail setting shows both sharply: the clicks want sharp timing, the two notes want fine pitch.',
+    },
     ketukan: {
       label: 'Drum hits',
       hint: 'Very short sounds. Move detail towards sharp timing to see each hit land — and watch the pitch go blurry as you do.',
@@ -439,6 +443,10 @@ const id: Copy = {
     akor: {
       label: 'Akor C mayor',
       hint: 'Tiga nada sekaligus, jadi tiga tumpukan berdampingan. Geser detail ke arah nada halus untuk memisahkannya.',
+    },
+    'nada-dan-klik': {
+      label: 'Dua nada dan klik',
+      hint: 'Dua nada tetap yang berdekatan, dan satu klik setiap setengah detik. Tidak ada pengaturan detail yang menajamkan keduanya: klik butuh waktu tajam, dua nada butuh nada halus.',
     },
     ketukan: {
       label: 'Ketukan',

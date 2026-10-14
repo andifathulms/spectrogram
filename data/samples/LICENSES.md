@@ -10,6 +10,7 @@ this project.
 | `siulan` | `data/samples/index.ts` — exponential sine sweep, 600 → 2400 Hz | CC0 1.0 |
 | `desis` | `data/samples/index.ts` — seeded noise through a high-pass and a 6 kHz resonator | CC0 1.0 |
 | `akor` | `data/samples/index.ts` — three decaying harmonic stacks, C4/E4/G4 | CC0 1.0 |
+| `nada-dan-klik` | `data/samples/index.ts` — 440 Hz and 554 Hz sines with a 1 ms click every 0.5 s | CC0 1.0 |
 | `ketukan` | `data/samples/index.ts` — seeded noise transients with a 90 Hz body | CC0 1.0 |
 | `sapuan-nyquist` | `data/samples/index.ts` — linear chirp sampled past fs/2 | CC0 1.0 |
 

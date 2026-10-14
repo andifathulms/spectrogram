@@ -141,4 +141,45 @@ describe('samples contain the frequencies they advertise', () => {
     expect(afterFold).toBeLessThan(atFold)
     expect(afterFold).toBeLessThan(FS / 2)
   })
+
+  it('the tones-and-clicks sample holds two steady tones 114 Hz apart', () => {
+    const audio = sampleById('nada-dan-klik')!.render(FS, 2.5)
+    const analyser = createSpectrumAnalyser({ N, fs: FS, window: 'blackman' })
+    // 0.32 s to 0.49 s: between the first two clicks, so only the tones are in it.
+    const frame = new Float32Array(N)
+    frame.set(audio.subarray(Math.floor(FS * 0.32), Math.floor(FS * 0.32) + N))
+    analyser.analyseFloat32(frame)
+
+    for (const hz of [440, 554.365]) {
+      const bin = Math.round((hz * N) / FS)
+      let peakBin = bin - 3
+      for (let k = bin - 3; k <= bin + 3; k++) {
+        if (analyser.amplitude[k] > analyser.amplitude[peakBin]) peakBin = k
+      }
+      expect(Math.abs(peakBin - bin)).toBeLessThanOrEqual(1)
+      // A real peak, with a gap below it on both sides — two tones, not one band.
+      expect(analyser.amplitude[peakBin]).toBeGreaterThan(analyser.amplitude[peakBin - 10] * 30)
+      expect(analyser.amplitude[peakBin]).toBeGreaterThan(analyser.amplitude[peakBin + 10] * 30)
+    }
+  })
+
+  it('its clicks are broadband and brief', () => {
+    const audio = sampleById('nada-dan-klik')!.render(FS, 2.5)
+    const short = 256
+    const highEnergy = (at: number): number => {
+      const analyser = createSpectrumAnalyser({ N: short, fs: FS, window: 'hann' })
+      const frame = new Float32Array(short)
+      frame.set(audio.subarray(at - short / 2, at + short / 2))
+      analyser.analyseFloat32(frame)
+      let sum = 0
+      for (let k = 1; k < analyser.bins; k++) {
+        if (binFrequency(k, short, FS) > 4000) sum += analyser.amplitude[k] ** 2
+      }
+      return sum
+    }
+
+    const onClick = highEnergy(Math.floor(FS * 0.75))
+    const between = highEnergy(Math.floor(FS * 1.0))
+    expect(onClick).toBeGreaterThan(between * 1000)
+  })
 })

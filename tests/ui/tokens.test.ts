@@ -109,7 +109,6 @@ describe('palette contrast', () => {
     inkMuted: CANVAS.inkMuted,
     inkFaint: CANVAS.inkFaint,
     instrument: CANVAS.instrument,
-    clip: CANVAS.clip,
   } as const
 
   it.each(
@@ -125,13 +124,36 @@ describe('palette contrast', () => {
 
   // Non-text instrument colour — the window bracket, the scan edge, focus
   // rings — against the plate, at the lower non-text threshold (WCAG 1.4.11).
+  // Clip red is in this group too: PRD §8 fixes its hex, and at about 3.6:1 it
+  // is a signal colour, not a text colour. It marks the clipping indicator's
+  // edge and dot; the words beside it are ink.
   it.each([
     ['instrument on plate', CANVAS.instrument, BACKGROUNDS.plate],
     ['instrument on surface', CANVAS.instrument, BACKGROUNDS.surface],
+    ['clip on plate', CANVAS.clip, BACKGROUNDS.plate],
+    ['clip on surface', CANVAS.clip, BACKGROUNDS.surface],
   ] as const)('%s is at least 3:1', (_label, fg, bg) => {
     const ratio = contrast(fg, bg)
     // eslint-disable-next-line no-console
     console.log(`contrast ${_label}: ${ratio.toFixed(2)}:1`)
     expect(ratio).toBeGreaterThanOrEqual(3)
+  })
+})
+
+describe('clip red marks clipping and nothing else', () => {
+  /*
+   * Invariant 12. Clip red is never text (it fails 4.5:1), and it appears
+   * only where the input-clipping indicator is drawn. A fault or a denied
+   * microphone is not clipping, and colouring it red would teach a visitor
+   * that red means "error" — after which the clipping light means nothing.
+   */
+  const files = componentFiles(join(ROOT, 'components'))
+
+  it.each(files)('%s', (file) => {
+    const source = readFileSync(file, 'utf8')
+    expect(source).not.toMatch(/\btext-clip\b/)
+    if (/\b(?:border|bg|fill|stroke|ring)-clip\b/.test(source)) {
+      expect(source).toMatch(/\.clipped\b/)
+    }
   })
 })

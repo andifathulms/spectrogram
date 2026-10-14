@@ -265,13 +265,13 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
         {micStatus !== null && (
           <p
             role="status"
-            className="mt-4 max-w-readable border-l-2 border-clip pl-3 text-sm leading-relaxed text-inkMuted"
+            className="mt-4 max-w-readable border-l-2 border-inkFaint pl-3 text-sm leading-relaxed text-inkMuted"
           >
             {micStatus}
           </p>
         )}
         {spectrogram.fault !== null && (
-          <p role="alert" className="mt-4 max-w-readable border-l-2 border-clip pl-3 text-sm text-clip">
+          <p role="alert" className="mt-4 max-w-readable border-l-2 border-inkFaint pl-3 text-sm text-ink">
             {spectrogram.fault}
           </p>
         )}
@@ -343,8 +343,9 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
         </div>
 
         {spectrogram.clipped && (
-          <p className="mt-4 flex flex-wrap items-center gap-2 text-sm text-clip">
-            <span className="rounded-full border border-clip px-2 py-0.5 text-xs uppercase tracking-wider">
+          <p className="mt-4 flex flex-wrap items-center gap-2 text-sm text-ink">
+            <span className="flex items-center gap-1.5 rounded-full border border-clip px-2 py-0.5 text-xs">
+              <span className="block h-1.5 w-1.5 rounded-full bg-clip" aria-hidden />
               {copy.clipping}
             </span>
             {copy.clippingHelp}

@@ -127,7 +127,7 @@ export function SynthesisWorkbench({ copy }: { copy: Copy }) {
                     </span>
                     <button
                       type="button"
-                      className="text-sm text-inkFaint hover:text-clip"
+                      className="text-sm text-inkFaint hover:text-ink"
                       onClick={() => setPartials((c) => c.filter((_, i) => i !== index))}
                     >
                       {copy.removePartial}
@@ -168,7 +168,7 @@ export function SynthesisWorkbench({ copy }: { copy: Copy }) {
                   </div>
 
                   {aliased && (
-                    <p className="mt-2 text-sm text-clip">
+                    <p className="mt-2 border-l-2 border-emulsion pl-3 text-sm text-inkMuted">
                       {copy.aliasedWarning} {fmt.hz(apparentFrequency(partial.frequencyHz, FS))}
                     </p>
                   )}
@@ -299,7 +299,7 @@ export function SynthesisWorkbench({ copy }: { copy: Copy }) {
       </Disclosure>
 
       {fault !== null && (
-        <p role="alert" className="border-l-2 border-clip pl-3 text-sm text-clip">
+        <p role="alert" className="border-l-2 border-inkFaint pl-3 text-sm text-ink">
           {fault}
         </p>
       )}

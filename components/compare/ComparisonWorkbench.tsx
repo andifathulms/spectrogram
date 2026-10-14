@@ -82,7 +82,7 @@ export function ComparisonWorkbench({ copy }: { copy: Copy }) {
         </div>
 
         {status !== null && (
-          <p role="alert" className="mt-4 border-l-2 border-clip pl-3 text-sm text-clip">
+          <p role="alert" className="mt-4 border-l-2 border-inkFaint pl-3 text-sm text-ink">
             {status}
           </p>
         )}

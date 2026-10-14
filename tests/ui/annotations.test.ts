@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { COPY, LOCALES } from '../../lib/i18n'
-import { HANN_PATH, plotPoint, windowFraction } from '../../lib/ui/annotations'
+import { HANN_PATH, blurBars, plotPoint, windowFraction } from '../../lib/ui/annotations'
 import { emphasis, plain } from '../../lib/ui/emphasis'
 
 describe('emphasis', () => {
@@ -53,5 +53,21 @@ describe('windowFraction', () => {
   it('the Hann bump starts and ends on the baseline', () => {
     expect(HANN_PATH.startsWith('M0.00,10.00')).toBe(true)
     expect(HANN_PATH.endsWith('100.00,10.00')).toBe(true)
+  })
+})
+
+describe('blurBars', () => {
+  it('trades one bar for the other, and never reaches zero', () => {
+    const short = blurBars(128, 128, 8192)
+    const long = blurBars(8192, 128, 8192)
+    expect(short.timing).toBeLessThan(short.pitch)
+    expect(long.timing).toBeGreaterThan(long.pitch)
+    expect(Math.min(short.timing, long.pitch)).toBeGreaterThan(0)
+  })
+
+  it('moves the two by the same amount', () => {
+    const a = blurBars(512, 128, 8192)
+    const b = blurBars(2048, 128, 8192)
+    expect(b.timing - a.timing).toBeCloseTo(a.pitch - b.pitch)
   })
 })

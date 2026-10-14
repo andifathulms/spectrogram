@@ -96,6 +96,10 @@ export interface Copy {
   detailCustom: string
   detailTimingNote: string
   detailPitchNote: string
+  timingBlur: string
+  pitchBlur: string
+  blurNote: string
+  fineTune: string
 
   viewTitle: string
   scaleLabels: Record<string, string>
@@ -303,6 +307,10 @@ const en: Copy = {
   detailCustom: 'Custom',
   detailTimingNote: 'Each column covers',
   detailPitchNote: 'Pitches closer than this merge',
+  timingBlur: 'Timing blur',
+  pitchBlur: 'Pitch blur',
+  blurNote: 'One bar always shrinks as the other grows. Nothing makes both short.',
+  fineTune: 'Fine-tune',
 
   viewTitle: 'View',
   scaleLabels: {
@@ -523,6 +531,10 @@ const id: Copy = {
   detailCustom: 'Bebas',
   detailTimingNote: 'Satu kolom mencakup',
   detailPitchNote: 'Nada yang lebih rapat dari ini menyatu',
+  timingBlur: 'Kabur waktu',
+  pitchBlur: 'Kabur nada',
+  blurNote: 'Satu batang selalu memendek saat yang lain memanjang. Tidak ada yang membuat keduanya pendek.',
+  fineTune: 'Penyetelan halus',
 
   viewTitle: 'Tampilan',
   scaleLabels: {

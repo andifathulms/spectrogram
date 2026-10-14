@@ -49,3 +49,16 @@ export const HANN_PATH: string = (() => {
   }
   return `M${points.join('L')}`
 })()
+
+/**
+ * The Detail control's two bars: how blurred timing and pitch are at window
+ * size N, each as a fraction of the bar, on the log2 scale the slider moves
+ * along. One grows exactly as the other shrinks — that is the point — and
+ * neither reaches zero, because neither ever becomes perfectly sharp.
+ */
+export function blurBars(N: number, smallest: number, largest: number): { timing: number; pitch: number } {
+  const span = Math.log2(largest) - Math.log2(smallest)
+  const t = span > 0 ? (Math.log2(N) - Math.log2(smallest)) / span : 0.5
+  const clamped = t < 0 ? 0 : t > 1 ? 1 : t
+  return { timing: 0.08 + clamped * 0.92, pitch: 1 - clamped * 0.92 }
+}

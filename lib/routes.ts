@@ -26,3 +26,11 @@ export function path(locale: string, route: Route): string {
 export function swapLocale(pathname: string, from: string, to: string): string {
   return pathname.startsWith(`/${from}`) ? `/${to}${pathname.slice(from.length + 1)}` : `/${to}/`
 }
+
+/**
+ * A file from public/, under the deployed basePath. Same-origin and bundled
+ * with the export, so loading it is part of loading the page (invariant 9).
+ */
+export function asset(file: string): string {
+  return `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/${file}`
+}

@@ -6,6 +6,7 @@ import { runComparison, type ComparisonResult } from '@/lib/audio/compare'
 import { startAudioContext, audioSupport } from '@/lib/audio/context'
 import { FFT_SIZES } from '@/lib/dsp/errors'
 import * as fmt from '@/lib/ui/format'
+import { fill } from '@/lib/ui/verdict'
 import type { Copy } from '@/lib/i18n'
 
 import { Button, Field, Segmented } from '@/components/controls/Control'
@@ -58,52 +59,52 @@ export function ComparisonWorkbench({ copy }: { copy: Copy }) {
     drawDifference(delta, result)
   }, [result])
 
+  /*
+   * The verdict leads. Before a run, the same place says what will appear
+   * there; after one, it is a sentence with the number in it, and the charts
+   * and readouts below are the evidence for it.
+   */
   return (
-    <div className="space-y-5">
-      <section className="card p-5">
-        <h2 className="display-md">{copy.comparisonHowTitle}</h2>
-        <p className="body mt-2 max-w-readable">{copy.comparisonHowBody}</p>
-        <p className="mt-4 max-w-readable border-l-2 border-instrument pl-3 text-sm leading-relaxed text-inkMuted">
-          {copy.comparisonHonest}
-        </p>
+    <div className="grid gap-4">
+      <section className="overflow-hidden rounded-card border border-hairline bg-plate shadow-glass">
+        <div className="grid gap-6 p-5 sm:p-7 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+          <div className="grid gap-3" role="status">
+            <p className="eyebrow m-0">{copy.comparisonEyebrow}</p>
+            {result === null ? (
+              <p className="m-0 max-w-[36ch] font-display text-[clamp(1.5rem,1.2rem+1.4vw,2.25rem)] leading-tight text-inkMuted">
+                {copy.comparisonPrompt}
+              </p>
+            ) : (
+              <p className="m-0 max-w-[30ch] font-display text-[clamp(1.6rem,1.2rem+1.8vw,2.6rem)] leading-tight text-ink">
+                {fill(copy.comparisonVerdict, { db: fmt.dbSize(result.worstNearPeaksDb) })}
+              </p>
+            )}
+          </div>
 
-        <div className="mt-5 flex flex-wrap items-end gap-6">
-          <Field label={copy.windowSize} value={`${size} ${copy.units.samples}`}>
-            <Segmented
-              ariaLabel={copy.windowSize}
-              value={size}
-              onChange={setSize}
-              options={SIZES.map((value) => ({ value, label: value }))}
-            />
-          </Field>
-          <Button variant="primary" onClick={() => void run()} disabled={running}>
-            {running ? copy.comparisonRunning : copy.runComparison}
-          </Button>
+          <div className="flex flex-wrap items-end gap-4">
+            <Field label={copy.windowSize} value={`${size} ${copy.units.samples}`}>
+              <Segmented
+                ariaLabel={copy.windowSize}
+                value={size}
+                onChange={setSize}
+                options={SIZES.map((value) => ({ value, label: value }))}
+              />
+            </Field>
+            <Button variant="primary" onClick={() => void run()} disabled={running}>
+              {running ? copy.comparisonRunning : copy.runComparison}
+            </Button>
+          </div>
         </div>
 
         {status !== null && (
-          <p role="alert" className="mt-4 border-l-2 border-inkFaint pl-3 text-sm text-ink">
-            {status}
+          <p role="alert" className="m-0 border-t border-hairline px-5 py-4 text-sm text-ink sm:px-7">
+            <span className="border-l-2 border-inkFaint pl-3">{status}</span>
           </p>
         )}
-      </section>
 
-      {result !== null && (
-        <>
-          <section className="card grid grid-cols-2 gap-x-6 gap-y-4 p-5 sm:grid-cols-3">
-            <Readout label={copy.worstDifference} value={fmt.db(result.worstNearPeaksDb)} emphasis />
-            <Readout label={copy.meanDifference} value={fmt.db(result.meanAbsDb)} />
-            <Readout label={`${copy.timing}: ${copy.ours}`} value={fmt.milliseconds(result.oursMs)} />
-            <Readout
-              label={`${copy.timing}: ${copy.theirs}`}
-              value={fmt.milliseconds(result.theirsMs)}
-            />
-            <Readout label={copy.bins} value={fmt.count(result.bins)} />
-            <Readout label={copy.sampleRate} value={`${(result.fs / 1000).toFixed(3)} kHz`} />
-          </section>
-
-          <section className="overflow-hidden rounded-card border border-hairline bg-plate">
-            <div className="flex flex-wrap items-center gap-5 border-b border-hairline px-3 py-2 text-sm">
+        {result !== null && (
+          <>
+            <div className="flex flex-wrap items-center gap-5 border-y border-hairline px-4 py-2.5 text-sm">
               <span className="flex items-center gap-2 text-energyHigh">
                 <span className="block h-0.5 w-5 bg-energyHigh" /> {copy.ours}
               </span>
@@ -113,16 +114,35 @@ export function ComparisonWorkbench({ copy }: { copy: Copy }) {
             </div>
             <canvas ref={overlayRef} className="block w-full" style={{ height: 280 }} />
 
-            <div className="border-y border-hairline px-3 py-2">
+            <div className="border-y border-hairline px-4 py-2.5">
               <span className="control-label">{copy.difference}</span>
             </div>
-            <canvas ref={deltaRef} className="block w-full" style={{ height: 140 }} />
-            <div className="px-3 py-2">
+            <canvas ref={deltaRef} className="tabular block w-full" style={{ height: 140 }} />
+
+            <div className="grid grid-cols-2 gap-x-6 gap-y-4 border-t border-hairline p-5 sm:grid-cols-3 lg:grid-cols-6">
+              <Readout label={copy.worstDifference} value={fmt.db(result.worstNearPeaksDb)} emphasis />
+              <Readout label={copy.meanDifference} value={fmt.db(result.meanAbsDb)} />
+              <Readout label={`${copy.timing}: ${copy.ours}`} value={fmt.milliseconds(result.oursMs)} />
+              <Readout label={`${copy.timing}: ${copy.theirs}`} value={fmt.milliseconds(result.theirsMs)} />
+              <Readout label={copy.bins} value={fmt.count(result.bins)} />
+              <Readout label={copy.sampleRate} value={`${(result.fs / 1000).toFixed(3)} kHz`} />
+            </div>
+            <div className="border-t border-hairline px-5 py-2.5">
               <span className="tabular text-xs text-inkFaint">0 Hz → {fmt.hz(result.fs / 2)}</span>
             </div>
-          </section>
-        </>
-      )}
+          </>
+        )}
+      </section>
+
+      <section className="grid gap-8 pt-6 md:grid-cols-2">
+        <div>
+          <h2 className="display-md">{copy.comparisonHowTitle}</h2>
+          <p className="body mt-3 max-w-readable">{copy.comparisonHowBody}</p>
+        </div>
+        <p className="m-0 max-w-readable self-start border-l-2 border-emulsion pl-4 text-[0.9375rem] leading-relaxed text-inkMuted md:mt-11">
+          {copy.comparisonHonest}
+        </p>
+      </section>
     </div>
   )
 }
@@ -204,6 +224,6 @@ function drawDifference(canvas: HTMLCanvasElement, result: ComparisonResult): vo
   ctx.stroke()
 
   ctx.fillStyle = CANVAS.inkMuted
-  ctx.font = `${11 * (window.devicePixelRatio || 1)}px monospace`
+  ctx.font = `${11 * (window.devicePixelRatio || 1)}px ${getComputedStyle(canvas).fontFamily || 'monospace'}`
   ctx.fillText(`±${scale.toFixed(2)} dB`, 6, 14 * (window.devicePixelRatio || 1))
 }

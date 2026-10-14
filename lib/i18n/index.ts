@@ -155,6 +155,9 @@ export interface Copy {
   spectrumTitle: string
   waveformTitle: string
   aliasedWarning: string
+  parsevalLabel: string
+  verdictExact: string
+  verdictOff: string
 
   // Proof
   comparisonTitle: string
@@ -171,6 +174,10 @@ export interface Copy {
   comparisonRunning: string
   comparisonUnavailable: string
   timing: string
+  comparisonEyebrow: string
+  comparisonPrompt: string
+  /** One sentence with a `{db}` slot for the worst difference near a peak. */
+  comparisonVerdict: string
 
   // Shared
   axisTime: string
@@ -378,6 +385,9 @@ const en: Copy = {
   spectrumTitle: 'What the transform found',
   waveformTitle: 'The wave you built',
   aliasedWarning: 'Above the limit — this tone folds back down to',
+  parsevalLabel: 'Energy kept (Parseval)',
+  verdictExact: 'Matches to floating-point precision',
+  verdictOff: 'Does not match — worth a closer look',
 
   comparisonTitle: 'Check the maths',
   comparisonLead:
@@ -396,6 +406,9 @@ const en: Copy = {
   comparisonRunning: 'Running…',
   comparisonUnavailable: 'AnalyserNode is not available in this browser.',
   timing: 'Compute time',
+  comparisonEyebrow: 'Result',
+  comparisonPrompt: 'Run both transforms on the same sound and the answer appears here, in one sentence.',
+  comparisonVerdict: 'Our transform and the browser’s agree within {db} near every peak.',
 
   axisTime: 'Time →',
   axisPitch: '↑ Pitch',
@@ -603,6 +616,9 @@ const id: Copy = {
   spectrumTitle: 'Yang ditemukan transform',
   waveformTitle: 'Gelombang yang Anda susun',
   aliasedWarning: 'Di atas batas — nada ini terlipat turun ke',
+  parsevalLabel: 'Energi terjaga (Parseval)',
+  verdictExact: 'Sama hingga presisi floating-point',
+  verdictOff: 'Tidak sama — layak diperiksa lebih dekat',
 
   comparisonTitle: 'Periksa hitungannya',
   comparisonLead:
@@ -621,6 +637,9 @@ const id: Copy = {
   comparisonRunning: 'Menjalankan…',
   comparisonUnavailable: 'AnalyserNode tidak tersedia di browser ini.',
   timing: 'Waktu komputasi',
+  comparisonEyebrow: 'Hasil',
+  comparisonPrompt: 'Jalankan kedua transform pada suara yang sama, dan jawabannya muncul di sini dalam satu kalimat.',
+  comparisonVerdict: 'Transform kami dan milik browser sepakat dalam selisih {db} di sekitar setiap puncak.',
 
   axisTime: 'Waktu →',
   axisPitch: '↑ Nada',

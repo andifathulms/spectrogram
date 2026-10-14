@@ -110,8 +110,26 @@ export function SpectrumChart({
 
   const ticks = frequencyTicks(scale, scale === 'linear' ? 0 : 20, fs / 2)
 
+  const markerMinHz = scale === 'linear' ? 0 : 20
+
   return (
     <div>
+      {/* Each tone's number, in a strip above the line it should appear on. Annotation layer. */}
+      <div className="relative h-8 border-b border-hairline" aria-hidden>
+        {expected.map((target, index) => {
+          const t = positionOf(scale, target, markerMinHz, fs / 2)
+          if (t < 0 || t > 1) return null
+          return (
+            <span
+              key={index}
+              className="tabular absolute top-1 grid h-6 w-6 -translate-x-1/2 place-items-center rounded-full border-[1.5px] border-instrument bg-plate text-[0.6875rem] font-medium text-instrument"
+              style={{ left: `${t * 100}%` }}
+            >
+              {index + 1}
+            </span>
+          )
+        })}
+      </div>
       <canvas ref={canvasRef} className="block w-full" style={{ height }} />
       <div className="relative mt-1 h-4 px-3">
         {ticks.map((tick, index) => {

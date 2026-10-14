@@ -72,3 +72,9 @@ export function splitUnit(formatted: string): { value: string; unit: string } {
   if (match === null) return { value: formatted, unit: '' }
   return { value: match[1], unit: match[2] }
 }
+
+/** A size of difference in dB, for prose: no sign, two decimals. */
+export function dbSize(value: number): string {
+  if (!Number.isFinite(value)) return '—'
+  return `${Math.abs(value).toFixed(2)} dB`
+}

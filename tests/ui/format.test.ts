@@ -5,7 +5,7 @@
 
 import { describe, expect, it } from 'vitest'
 
-import { db, hz, ratio, seconds, splitUnit } from '../../lib/ui/format'
+import { db, dbSize, hz, ratio, seconds, splitUnit } from '../../lib/ui/format'
 
 describe('splitUnit', () => {
   it.each([
@@ -38,4 +38,11 @@ describe('splitUnit', () => {
       expect(`${value} ${unit}`).toBe(formatted)
     },
   )
+})
+
+describe('dbSize', () => {
+  it('drops the sign and keeps the unit', () => {
+    expect(dbSize(-0.0234)).toBe('0.02 dB')
+    expect(dbSize(Number.NaN)).toBe('—')
+  })
 })

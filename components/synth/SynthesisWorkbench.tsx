@@ -9,11 +9,12 @@ import { createAnalysisClient, type AnalysisClient, type Inspection } from '@/li
 import { startAudioContext } from '@/lib/audio/context'
 import { play, type PlaybackHandle } from '@/lib/audio/playback'
 import * as fmt from '@/lib/ui/format'
+import { isExact } from '@/lib/ui/verdict'
 import type { Copy } from '@/lib/i18n'
 
 import { Button, Field, Segmented, Slider } from '@/components/controls/Control'
 import { Disclosure } from '@/components/controls/Disclosure'
-import { Readout } from '@/components/ui/Readout'
+import { Quantity } from '@/components/ui/Quantity'
 import { SpectrumChart } from './SpectrumChart'
 import { Waveform } from '@/components/wave/Waveform'
 
@@ -109,32 +110,49 @@ export function SynthesisWorkbench({ copy }: { copy: Copy }) {
       : Math.abs(inspection.spectralEnergy - inspection.timeEnergy) /
         Math.max(inspection.timeEnergy, 1e-12)
 
-  return (
-    <div className="space-y-5">
-      <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
-        {/* What you are making. */}
-        <div className="card p-5">
-          <h2 className="control-label">{copy.tonesTitle}</h2>
+  const roundTripError = inspection?.roundTripError ?? Number.NaN
 
-          <div className="mt-3 space-y-3">
+  return (
+    <div className="grid gap-4">
+      <section className="grid items-start gap-4 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
+        {/*
+         * What you are making: one panel of rows, not a card per tone. Each
+         * tone's number reappears on the spectrum, over the peak it made.
+         */}
+        <div className="overflow-hidden rounded-card border border-hairline bg-plate shadow-glass">
+          <div className="flex items-center justify-between border-b border-hairline px-5 py-3">
+            <h2 className="text-[0.9375rem] font-semibold text-ink">{copy.tonesTitle}</h2>
+            <Quantity value={String(partials.length)} className="text-sm text-inkMuted" />
+          </div>
+
+          <ol className="m-0 list-none p-0">
             {partials.map((partial, index) => {
               const aliased = isAliased(partial.frequencyHz, FS)
               return (
-                <div key={index} className="rounded-card border border-hairline bg-raised/40 p-4">
-                  <div className="flex items-baseline justify-between">
-                    <span className="control-label">
-                      {copy.partial} {index + 1}
-                    </span>
-                    <button
-                      type="button"
-                      className="text-sm text-inkFaint hover:text-ink"
-                      onClick={() => setPartials((c) => c.filter((_, i) => i !== index))}
-                    >
-                      {copy.removePartial}
-                    </button>
-                  </div>
+                <li
+                  key={index}
+                  className="grid grid-cols-[1.75rem_minmax(0,1fr)] gap-3 border-b border-hairline px-5 py-4 last:border-b-0"
+                >
+                  <span
+                    className="tabular mt-0.5 grid h-6 w-6 place-items-center rounded-full border-[1.5px] border-instrument text-[0.6875rem] font-medium text-instrument"
+                    aria-hidden
+                  >
+                    {index + 1}
+                  </span>
+                  <div className="grid min-w-0 gap-3">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span className="text-sm font-medium text-ink">
+                        {copy.partial} {index + 1}
+                      </span>
+                      <button
+                        type="button"
+                        className="text-xs text-inkFaint underline-offset-4 hover:text-ink hover:underline"
+                        onClick={() => setPartials((c) => c.filter((_, i) => i !== index))}
+                      >
+                        {copy.removePartial}
+                      </button>
+                    </div>
 
-                  <div className="mt-2 grid gap-3 sm:grid-cols-3">
                     <Field label={copy.frequency} value={fmt.hz(partial.frequencyHz)}>
                       <Slider
                         min={20}
@@ -145,131 +163,147 @@ export function SynthesisWorkbench({ copy }: { copy: Copy }) {
                         onChange={(frequencyHz) => update(index, { frequencyHz })}
                       />
                     </Field>
-                    <Field label={copy.amplitude} value={partial.amplitude.toFixed(2)}>
-                      <Slider
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        value={partial.amplitude}
-                        ariaLabel={`${copy.amplitude} ${index + 1}`}
-                        onChange={(amplitude) => update(index, { amplitude })}
-                      />
-                    </Field>
-                    <Field label={copy.phase} value={`${(partial.phase / Math.PI).toFixed(2)} π`}>
-                      <Slider
-                        min={0}
-                        max={Math.PI * 2}
-                        step={0.01}
-                        value={partial.phase}
-                        ariaLabel={`${copy.phase} ${index + 1}`}
-                        onChange={(phase) => update(index, { phase })}
-                      />
-                    </Field>
-                  </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <Field label={copy.amplitude} value={partial.amplitude.toFixed(2)}>
+                        <Slider
+                          min={0}
+                          max={1}
+                          step={0.01}
+                          value={partial.amplitude}
+                          ariaLabel={`${copy.amplitude} ${index + 1}`}
+                          onChange={(amplitude) => update(index, { amplitude })}
+                        />
+                      </Field>
+                      <Field label={copy.phase} value={`${(partial.phase / Math.PI).toFixed(2)} π`}>
+                        <Slider
+                          min={0}
+                          max={Math.PI * 2}
+                          step={0.01}
+                          value={partial.phase}
+                          ariaLabel={`${copy.phase} ${index + 1}`}
+                          onChange={(phase) => update(index, { phase })}
+                        />
+                      </Field>
+                    </div>
 
-                  {aliased && (
-                    <p className="mt-2 border-l-2 border-emulsion pl-3 text-sm text-inkMuted">
-                      {copy.aliasedWarning} {fmt.hz(apparentFrequency(partial.frequencyHz, FS))}
-                    </p>
-                  )}
-                </div>
+                    {aliased && (
+                      <p className="m-0 border-l-2 border-emulsion pl-3 text-sm text-inkMuted">
+                        {copy.aliasedWarning} {fmt.hz(apparentFrequency(partial.frequencyHz, FS))}
+                      </p>
+                    )}
+                  </div>
+                </li>
               )
             })}
-          </div>
+          </ol>
 
-          <div className="mt-4 flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2 border-t border-hairline px-5 py-4">
             <Button variant="primary" onClick={() => void onPlay()}>
               {copy.play}
             </Button>
             <Button onClick={() => playbackRef.current?.stop()}>{copy.stop}</Button>
             <Button
-              onClick={() =>
-                setPartials((c) => [...c, { frequencyHz: 1000, amplitude: 0.2, phase: 0 }])
-              }
+              onClick={() => setPartials((c) => [...c, { frequencyHz: 1000, amplitude: 0.2, phase: 0 }])}
             >
               {copy.addPartial}
             </Button>
           </div>
         </div>
 
-        {/* What the transform makes of it. */}
-        <div className="space-y-5">
-          <div className="overflow-hidden rounded-card border border-hairline bg-plate">
-            <div className="border-b border-hairline px-3 py-2">
-              <h2 className="control-label">{copy.waveformTitle}</h2>
-            </div>
-            {/* No window bracket here: the window is the whole signal, so a
-                bracket would just outline the entire canvas. */}
-            <Waveform
-              samples={signal}
-              fs={FS}
-              windowStartSeconds={null}
-              windowSeconds={N / FS}
-              gutter={0}
-              height={110}
-            />
+        {/* What the transform makes of it. One instrument, wave above spectrum, kept in view. */}
+        <div className="overflow-hidden rounded-card border border-hairline bg-plate shadow-glass lg:sticky lg:top-20">
+          <div className="border-b border-hairline px-4 py-2.5">
+            <h2 className="control-label">{copy.waveformTitle}</h2>
           </div>
+          {/* No window bracket here: the window is the whole signal, so a
+              bracket would just outline the entire canvas. */}
+          <Waveform samples={signal} fs={FS} windowStartSeconds={null} windowSeconds={N / FS} gutter={0} height={96} />
 
-          <div className="overflow-hidden rounded-card border border-hairline bg-plate">
-            <div className="border-b border-hairline px-3 py-2">
-              <h2 className="control-label">{copy.spectrumTitle}</h2>
-            </div>
-            <SpectrumChart
-              amplitude={inspection?.amplitude ?? null}
-              N={N}
-              fs={FS}
-              scale={scale}
-              expected={expected}
-            />
+          <div className="border-y border-hairline px-4 py-2.5">
+            <h2 className="control-label">{copy.spectrumTitle}</h2>
           </div>
+          <SpectrumChart
+            amplitude={inspection?.amplitude ?? null}
+            N={N}
+            fs={FS}
+            scale={scale}
+            expected={expected}
+            height={300}
+          />
+          <div className="h-2" />
         </div>
       </section>
 
       {/*
-       * The point of the page. The table is the claim — you set these tones,
-       * the transform found these — so it leads, and the two scalars that
-       * back it up sit beside it rather than above it.
+       * The point of the page. The two checks lead as verdicts; the table —
+       * you set these tones, the transform found these — backs them up.
        */}
-      <section className="card p-5">
-        <h2 className="display-md">{copy.roundTrip}</h2>
-        <p className="body mt-2 max-w-readable">{copy.roundTripHelp}</p>
+      <section className="card grid gap-6 p-5 sm:p-6">
+        <div>
+          <h2 className="display-md">{copy.roundTrip}</h2>
+          <p className="body mt-2 max-w-readable">{copy.roundTripHelp}</p>
+        </div>
 
-        <div className="mt-5 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-          <table className="tabular w-full text-sm">
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Verdict
+            label={copy.roundTripError}
+            value={fmt.scientific(roundTripError)}
+            exact={inspection === null ? null : isExact(roundTripError)}
+            copy={copy}
+          />
+          <Verdict
+            label={copy.parsevalLabel}
+            value={fmt.scientific(parsevalError)}
+            exact={inspection === null ? null : isExact(parsevalError)}
+            copy={copy}
+          />
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[22rem] text-sm">
             <thead>
-              <tr className="text-left text-inkFaint">
-                <th className="py-1.5 font-normal">{copy.frequency}</th>
-                <th className="py-1.5 font-normal">{copy.expected}</th>
-                <th className="py-1.5 font-normal">{copy.recovered}</th>
+              <tr className="text-left text-xs text-inkFaint">
+                <th className="py-2 pr-4 font-normal">#</th>
+                <th className="py-2 pr-4 font-normal">{copy.frequency}</th>
+                <th className="py-2 pr-4 font-normal">{copy.expected}</th>
+                <th className="py-2 font-normal">{copy.recovered}</th>
               </tr>
             </thead>
             <tbody>
               {partials.map((partial, index) => (
                 <tr key={index} className="border-t border-hairline text-ink">
-                  <td className="py-1.5">{fmt.hz(expected[index])}</td>
-                  <td className="py-1.5">{partial.amplitude.toFixed(3)}</td>
-                  <td className="py-1.5 text-instrument">{(recovered[index] ?? 0).toFixed(3)}</td>
+                  <td className="tabular py-2 pr-4 text-instrument">{index + 1}</td>
+                  <td className="py-2 pr-4">
+                    <Quantity value={fmt.hz(expected[index])} />
+                  </td>
+                  <td className="py-2 pr-4">
+                    <Quantity value={partial.amplitude.toFixed(3)} />
+                  </td>
+                  <td className="py-2">
+                    <Quantity value={(recovered[index] ?? 0).toFixed(3)} className="text-instrument" />
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
-
-          <div className="grid grid-cols-2 gap-x-6 gap-y-4 self-start sm:grid-cols-3">
-            <Readout
-              label={copy.roundTripError}
-              value={fmt.scientific(inspection?.roundTripError ?? Number.NaN)}
-              emphasis
-            />
-            <Readout label="Parseval" value={fmt.scientific(parsevalError)} />
-            <Readout label={copy.peak} value={peak.toFixed(3)} />
-          </div>
         </div>
 
-        <p className="caption mt-4 max-w-readable">{copy.recoveredNote}</p>
+        <p className="caption m-0 max-w-readable">
+          {copy.recoveredNote} {copy.peak}: <Quantity value={peak.toFixed(3)} className="text-inkMuted" />
+        </p>
       </section>
 
-      <Disclosure title={copy.advancedTitle} help={copy.advancedHelp}>
-        <div className="grid gap-6 sm:grid-cols-2">
+      <details className="card group">
+        <summary className="flex items-center justify-between gap-3 px-5 py-4 hover:bg-raised/40">
+          <span className="text-[0.9375rem] font-semibold text-ink">{copy.fineTune}</span>
+          <span
+            className="tabular text-lg leading-none text-inkFaint transition-transform group-open:rotate-45 motion-reduce:transition-none"
+            aria-hidden
+          >
+            +
+          </span>
+        </summary>
+        <div className="grid gap-6 border-t border-hairline p-5 sm:grid-cols-2">
           <Field label={copy.windowFunction} help={copy.windowFunctionHelp}>
             <Segmented
               ariaLabel={copy.windowFunction}
@@ -296,12 +330,42 @@ export function SynthesisWorkbench({ copy }: { copy: Copy }) {
             />
           </Field>
         </div>
-      </Disclosure>
+      </details>
 
       {fault !== null && (
         <p role="alert" className="border-l-2 border-inkFaint pl-3 text-sm text-ink">
           {fault}
         </p>
+      )}
+    </div>
+  )
+}
+
+/**
+ * A correctness figure, and in words whether it is floating-point residue.
+ * `exact` is null until the first analysis arrives, so nothing is claimed
+ * about a result that does not exist yet.
+ */
+function Verdict({
+  label,
+  value,
+  exact,
+  copy,
+}: {
+  label: string
+  value: string
+  exact: boolean | null
+  copy: Copy
+}) {
+  return (
+    <div className="grid gap-1.5 rounded-lg border border-hairline bg-void p-4" role="status">
+      <span className="text-xs text-inkFaint">{label}</span>
+      <Quantity value={value} className="text-lg text-ink" />
+      {exact !== null && (
+        <span className={`flex items-center gap-2 text-xs ${exact ? 'text-instrument' : 'text-inkMuted'}`}>
+          <span className={`block h-1.5 w-1.5 rounded-full ${exact ? 'bg-instrument' : 'bg-inkFaint'}`} aria-hidden />
+          {exact ? copy.verdictExact : copy.verdictOff}
+        </span>
       )}
     </div>
   )

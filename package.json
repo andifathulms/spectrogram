@@ -11,6 +11,7 @@
     "test:run": "vitest run",
     "test:dsp": "vitest run tests/oracle tests/analytic tests/properties tests/windows",
     "bench:fft": "vitest run --config vitest.bench.config.ts",
+    "thumbs": "UPDATE_THUMBS=1 vitest run tests/render/thumbnails.test.ts",
     "typecheck": "tsc --noEmit",
     "lint": "next lint"
   },

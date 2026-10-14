@@ -73,10 +73,21 @@ const config: Config = {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.25' },
         },
+        // The edge fades as it reaches the right, so no cyan line is left behind.
+        develop: {
+          '0%': { left: '0%', opacity: '1' },
+          '85%': { opacity: '1' },
+          '100%': { left: '100%', opacity: '0' },
+        },
       },
       animation: {
-        /** The live indicator, and nothing else. Decoration does not move. */
+        /*
+         * Two motions, both of them data arriving: the live indicator, and the
+         * home plate developing once behind its scan edge. Decoration does not
+         * move.
+         */
         pulseDot: 'pulseDot 1.6s ease-in-out infinite',
+        develop: 'develop 1.4s cubic-bezier(0.25, 0.7, 0.3, 1) 0.15s both',
       },
     },
   },

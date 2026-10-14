@@ -133,6 +133,18 @@
   .card {
     @apply rounded-card border border-hairline bg-plate shadow-glass;
   }
+
+  /*
+   * Link-shaped actions, matching components/controls/Control Button: the
+   * primary is light through the plate, the quiet one an outline.
+   */
+  .action-primary {
+    @apply inline-flex items-center gap-2 rounded-full border border-energyHigh bg-energyHigh px-5 py-2.5 text-sm font-medium text-plate transition-colors hover:border-ink hover:bg-ink;
+  }
+
+  .action-quiet {
+    @apply inline-flex items-center gap-2 rounded-full border border-hairline px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:border-inkFaint;
+  }
 }
 
 /*

@@ -44,21 +44,30 @@ export interface Copy {
   heroCta: string
   heroSecondary: string
   heroCaption: string
-  readTitle: string
-  readTimeTitle: string
-  readTimeBody: string
-  readPitchTitle: string
-  readPitchBody: string
-  readBrightTitle: string
-  readBrightBody: string
-  tryTitle: string
+  /** The numbered markers on the hero plate, in order. */
+  heroMarks: { title: string; body: string }[]
+  tradeoffEyebrow: string
+  tradeoffTitle: string
+  tradeoffBody: string
+  /** What each Detail preset shows on the tones-and-clicks sample. */
+  tradeoffRows: { sharp: string; balanced: string; fine: string }
+  tradeoffWindow: string
+  tradeoffWindowShort: string
+  tradeoffBin: string
+  tradeoffCta: string
+  modesEyebrow: string
+  modesTitle: string
   tryListenBody: string
   tryBuildBody: string
   tryProofBody: string
+  modeOpen: string
+  trustEyebrow: string
+  trustTitle: string
+  trustNetwork: string
+  trustChecks: string
+  trustLibraries: string
   homeWhyTitle: string
   homeWhyBody: string
-  homeTradeoffTitle: string
-  homeTradeoffBody: string
   homePrivacyTitle: string
   homePrivacyBody: string
 
@@ -181,36 +190,54 @@ const en: Copy = {
   footerCredit:
     'Built as an explanation, not a product. The transform is written from scratch — Cooley-Tukey (1965), and Harris (1978) for the windows.',
 
-  heroTitle: 'See what sound looks like',
+  heroTitle: 'See what sound *looks* like',
   heroLede:
     'Every sound is a stack of pure tones. Play one of the samples, or whistle into your microphone, and watch this page pull the tones apart and paint them as they arrive.',
   heroCta: 'Start listening',
-  heroSecondary: 'How to read it',
+  heroSecondary: 'See the tradeoff',
   heroCaption:
-    'One plucked guitar string: the note itself, and the overtones stacked above it. Every pixel here was computed by this page’s own transform.',
+    'One plucked guitar string. Time runs left to right, pitch bottom to top, and brighter means louder. Every pixel was computed by this page’s own transform.',
+  heroMarks: [
+    { title: 'The note', body: 'The brightest line, at 196 Hz. That is the pitch you hear.' },
+    {
+      title: 'Its overtones',
+      body: 'Evenly spaced lines above it. They are why a guitar sounds like a guitar and not a flute.',
+    },
+    {
+      title: 'The fade',
+      body: 'High overtones die first, which is why a note mellows as it rings.',
+    },
+  ],
 
-  readTitle: 'How to read the picture',
-  readTimeTitle: 'Left to right is time',
-  readTimeBody:
-    'The picture is drawn one thin column at a time, the way a seismograph draws. The right-hand edge is the newest sound.',
-  readPitchTitle: 'Bottom to top is pitch',
-  readPitchBody:
-    'Low rumbles sit at the bottom, hiss and cymbals at the top. A note that slides upwards draws a line that climbs.',
-  readBrightTitle: 'Bright means loud',
-  readBrightBody:
-    'A bright band is a strong tone; dark is silence at that pitch. One plucked guitar string draws a whole stack of stripes — the note itself, plus the overtones above it that make it sound like a guitar and not a flute.',
+  tradeoffEyebrow: 'The one idea worth taking away',
+  tradeoffTitle: 'You can have sharp timing *or* sharp pitch',
+  tradeoffBody:
+    'One sound, analysed three ways: two steady notes close together, and a click every half second. The cyan bump above each picture is the window — how much sound goes into one column — drawn to the same time scale. A short window catches the clicks and blurs the notes into one band. A long one splits the notes and smears the clicks. It is the same mathematics as Heisenberg’s uncertainty principle, not a limitation of this page.',
+  tradeoffRows: {
+    sharp: 'Each click is a thin vertical line. The two notes blur into one wide band.',
+    balanced: 'Clicks and notes are both readable, and neither is crisp.',
+    fine: 'The two notes are two clean lines. Each click smears across its window.',
+  },
+  tradeoffWindow: 'window',
+  tradeoffWindowShort: 'analysis window, to scale',
+  tradeoffBin: 'per bin',
+  tradeoffCta: 'Drag it yourself',
 
-  tryTitle: 'Three things to try',
+  modesEyebrow: 'Three ways in',
+  modesTitle: 'Look, *build*, then check',
   tryListenBody:
     'Play a guitar note, a chord, a drum hit, or your own voice, and watch the picture build as it happens.',
   tryBuildBody:
     'Stack pure tones with sliders, hear the result, and check that the picture finds exactly the tones you put in.',
   tryProofBody:
-    'Run our transform beside the browser’s own on the same sound, and see for yourself how far apart the two answers are.',
+    'Run our transform beside the browser’s own on the same sound, and see how far apart the two answers are.',
+  modeOpen: 'Open',
 
-  homeTradeoffTitle: 'The one idea worth taking away',
-  homeTradeoffBody:
-    'You cannot know exactly when a sound happened and exactly what pitch it was, both at once. Measuring a low note takes time — you have to watch several of its cycles go by — so the sharper the pitch, the blurrier the timing. Drag the detail control and you can watch the picture trade one for the other. It is the same mathematics as Heisenberg’s uncertainty principle, not a limitation of this page.',
+  trustEyebrow: 'Two claims you can check',
+  trustTitle: 'Private by construction, *correct* by test',
+  trustNetwork: 'network requests after the page loads',
+  trustChecks: 'independent correctness checks on the transform',
+  trustLibraries: 'audio or maths libraries. The FFT is written from scratch.',
 
   homePrivacyTitle: 'Your microphone never leaves this page',
   homePrivacyBody:
@@ -383,36 +410,54 @@ const id: Copy = {
   footerCredit:
     'Dibuat sebagai penjelasan, bukan produk. Transform-nya ditulis dari nol — Cooley-Tukey (1965), dan Harris (1978) untuk window function.',
 
-  heroTitle: 'Lihat wujud sebuah suara',
+  heroTitle: 'Lihat *wujud* sebuah suara',
   heroLede:
     'Setiap suara adalah tumpukan nada murni. Putar salah satu contoh, atau bersiul ke mikrofon Anda, dan lihat halaman ini memisahkan nada-nadanya lalu melukisnya begitu terdengar.',
   heroCta: 'Mulai lihat suara',
-  heroSecondary: 'Cara membacanya',
+  heroSecondary: 'Lihat tradeoff-nya',
   heroCaption:
-    'Satu petikan senar gitar: nada dasarnya, dan overtone yang bertumpuk di atasnya. Setiap piksel di sini dihitung oleh transform milik halaman ini sendiri.',
+    'Satu petikan senar gitar. Waktu berjalan dari kiri ke kanan, nada dari bawah ke atas, dan makin terang makin keras. Setiap pikselnya dihitung oleh transform milik halaman ini sendiri.',
+  heroMarks: [
+    { title: 'Nadanya', body: 'Garis paling terang, di 196 Hz. Itulah nada yang Anda dengar.' },
+    {
+      title: 'Overtone-nya',
+      body: 'Garis berjarak rata di atasnya. Karena merekalah gitar terdengar seperti gitar, bukan seruling.',
+    },
+    {
+      title: 'Memudarnya',
+      body: 'Overtone tinggi hilang lebih dulu, karena itu nada terdengar makin lembut saat berdenging.',
+    },
+  ],
 
-  readTitle: 'Cara membaca gambarnya',
-  readTimeTitle: 'Kiri ke kanan: waktu',
-  readTimeBody:
-    'Gambarnya dilukis satu kolom tipis sekali jalan, seperti seismograf. Tepi kanan adalah suara yang paling baru.',
-  readPitchTitle: 'Bawah ke atas: nada',
-  readPitchBody:
-    'Dengungan rendah berada di bawah, desis dan simbal di atas. Nada yang naik menggambar garis yang memanjat.',
-  readBrightTitle: 'Terang berarti keras',
-  readBrightBody:
-    'Pita terang berarti nada yang kuat; gelap berarti sunyi pada nada itu. Satu petikan gitar menggambar setumpuk garis — nada dasarnya, ditambah overtone di atasnya yang membuatnya terdengar seperti gitar dan bukan seruling.',
+  tradeoffEyebrow: 'Satu gagasan yang layak dibawa pulang',
+  tradeoffTitle: 'Waktu yang tajam *atau* nada yang tajam',
+  tradeoffBody:
+    'Satu suara, dianalisis dengan tiga cara: dua nada tetap yang berdekatan, dan satu klik setiap setengah detik. Tonjolan cyan di atas tiap gambar adalah window — seberapa banyak suara yang masuk ke satu kolom — digambar dengan skala waktu yang sama. Window pendek menangkap klik dan mengaburkan dua nada menjadi satu pita. Window panjang memisahkan kedua nada dan mengaburkan klik. Ini matematika yang sama dengan prinsip ketidakpastian Heisenberg, bukan keterbatasan halaman ini.',
+  tradeoffRows: {
+    sharp: 'Setiap klik menjadi garis tegak yang tipis. Dua nadanya menyatu menjadi satu pita lebar.',
+    balanced: 'Klik dan nada sama-sama terbaca, dan tidak ada yang tajam.',
+    fine: 'Dua nadanya menjadi dua garis bersih. Setiap klik terhampar selebar window-nya.',
+  },
+  tradeoffWindow: 'window',
+  tradeoffWindowShort: 'window analisis, sesuai skala',
+  tradeoffBin: 'per bin',
+  tradeoffCta: 'Geser sendiri',
 
-  tryTitle: 'Tiga hal untuk dicoba',
+  modesEyebrow: 'Tiga pintu masuk',
+  modesTitle: 'Lihat, *susun*, lalu periksa',
   tryListenBody:
     'Putar petikan gitar, akor, ketukan drum, atau suara Anda sendiri, lalu lihat gambarnya terbentuk saat itu juga.',
   tryBuildBody:
     'Tumpuk nada murni dengan slider, dengarkan hasilnya, dan periksa bahwa gambarnya menemukan persis nada yang Anda masukkan.',
   tryProofBody:
-    'Jalankan transform kami berdampingan dengan milik browser, dan lihat sendiri seberapa jauh kedua jawabannya berbeda.',
+    'Jalankan transform kami berdampingan dengan milik browser pada suara yang sama, dan lihat seberapa jauh kedua jawabannya berbeda.',
+  modeOpen: 'Buka',
 
-  homeTradeoffTitle: 'Satu gagasan yang layak dibawa pulang',
-  homeTradeoffBody:
-    'Anda tidak bisa tahu persis kapan sebuah suara terjadi dan persis nada apa itu, sekaligus. Mengukur nada rendah butuh waktu — beberapa siklusnya harus diamati — jadi makin tajam nadanya, makin kabur waktunya. Geser kontrol detail dan Anda bisa melihat gambarnya menukar yang satu dengan yang lain. Ini matematika yang sama dengan prinsip ketidakpastian Heisenberg, bukan keterbatasan halaman ini.',
+  trustEyebrow: 'Dua klaim yang bisa Anda periksa',
+  trustTitle: 'Privat sejak rancangannya, *benar* menurut tesnya',
+  trustNetwork: 'permintaan jaringan setelah halaman dimuat',
+  trustChecks: 'pemeriksaan kebenaran yang saling bebas pada transform-nya',
+  trustLibraries: 'library audio atau matematika. FFT-nya ditulis dari nol.',
 
   homePrivacyTitle: 'Mikrofon Anda tidak meninggalkan halaman ini',
   homePrivacyBody:

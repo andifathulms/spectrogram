@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Chivo_Mono, Instrument_Sans, Instrument_Serif } from 'next/font/google'
+import { IBM_Plex_Mono, Instrument_Sans, Instrument_Serif } from 'next/font/google'
 
 import './globals.css'
 import { DEFAULT_LOCALE } from '@/lib/i18n'
@@ -12,6 +12,8 @@ import { DEFAULT_LOCALE } from '@/lib/i18n'
 const display = Instrument_Serif({
   subsets: ['latin'],
   weight: '400',
+  // The italic sets the one emphasised word a headline may carry.
+  style: ['normal', 'italic'],
   display: 'swap',
   variable: '--font-display',
 })
@@ -22,8 +24,14 @@ const sans = Instrument_Sans({
   variable: '--font-sans',
 })
 
-const mono = Chivo_Mono({
+/*
+ * Readouts. Two weights so a value can lead and its unit can follow quietly
+ * (components/ui/Quantity) — the unit is always there (invariant 10), it just
+ * no longer competes with the number.
+ */
+const mono = IBM_Plex_Mono({
   subsets: ['latin'],
+  weight: ['400', '500'],
   display: 'swap',
   variable: '--font-mono',
 })

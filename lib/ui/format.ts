@@ -60,3 +60,15 @@ export function scientific(value: number): string {
   if (value === 0) return '0'
   return value.toExponential(2)
 }
+
+/**
+ * A formatted readout split into its number and its unit, so the two can be
+ * set at different weights. Nothing is dropped: joining the parts with a
+ * space gives back the input, and a string with no trailing unit — or prose,
+ * like a placeholder hint — comes back whole as the value.
+ */
+export function splitUnit(formatted: string): { value: string; unit: string } {
+  const match = /^(.*\d)\s+([^\s\d−+.,-][^\s\d]*)$/.exec(formatted)
+  if (match === null) return { value: formatted, unit: '' }
+  return { value: match[1], unit: match[2] }
+}

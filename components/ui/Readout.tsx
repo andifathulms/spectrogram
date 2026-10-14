@@ -6,6 +6,8 @@
  * change. There is deliberately no way to render a bare number through this.
  */
 
+import { Quantity } from './Quantity'
+
 interface Props {
   label: string
   /** Already formatted, unit included — see lib/ui/format. */
@@ -18,12 +20,11 @@ interface Props {
 export function Readout({ label, value, emphasis = false, className = '' }: Props) {
   return (
     <div className={`min-w-0 ${className}`}>
-      <div className="control-label truncate">{label}</div>
-      <div
-        className={`tabular mt-0.5 text-sm ${emphasis ? 'text-instrument' : 'text-energyHigh'}`}
-      >
-        {value}
-      </div>
+      <div className="truncate text-xs text-inkFaint">{label}</div>
+      <Quantity
+        value={value}
+        className={`mt-0.5 block text-[0.9375rem] ${emphasis ? 'text-instrument' : 'text-ink'}`}
+      />
     </div>
   )
 }

@@ -2,6 +2,8 @@
 
 import { cloneElement, isValidElement, useId, type ReactElement } from 'react'
 
+import { Quantity } from '@/components/ui/Quantity'
+
 interface FieldProps {
   label: string
   help?: string
@@ -39,7 +41,7 @@ export function Field({ label, help, value, children }: FieldProps) {
         ) : (
           <span className="control-label">{label}</span>
         )}
-        {value !== undefined && <span className="tabular text-sm text-instrument">{value}</span>}
+        {value !== undefined && <Quantity value={value} className="text-sm text-instrument" />}
       </div>
       <div className="mt-1.5">{control}</div>
       {help !== undefined && (

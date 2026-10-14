@@ -50,22 +50,30 @@
    */
   .display-xl {
     @apply font-display text-ink;
-    font-size: clamp(2.5rem, 1.6rem + 4.2vw, 5rem);
-    line-height: 1.03;
-    letter-spacing: -0.015em;
+    font-size: clamp(2.75rem, 1.6rem + 5vw, 6rem);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
   }
 
   .display-lg {
     @apply font-display text-ink;
-    font-size: clamp(1.9rem, 1.4rem + 2.2vw, 3rem);
-    line-height: 1.1;
-    letter-spacing: -0.01em;
+    font-size: clamp(2rem, 1.45rem + 2.4vw, 3.4rem);
+    line-height: 1.04;
+    letter-spacing: -0.012em;
   }
 
   .display-md {
     @apply font-display text-ink;
     font-size: clamp(1.35rem, 1.15rem + 0.9vw, 1.75rem);
     line-height: 1.2;
+  }
+
+  /* One emphasised word per headline, in the serif's italic and the ramp's light. */
+  .display-xl em,
+  .display-lg em,
+  .display-md em {
+    font-style: italic;
+    color: theme('colors.energyHigh');
   }
 
   .lede {
@@ -98,12 +106,18 @@
     border-color: theme('colors.hairline');
   }
 
+  /*
+   * Labels are sentence case. Tracked capitals at 11px read as texture and
+   * are slow to read as words; a medium-weight label is both quieter and
+   * faster.
+   */
   .control-label {
-    @apply text-[0.6875rem] uppercase tracking-[0.14em] text-inkFaint;
+    @apply text-[0.8125rem] font-medium leading-snug text-inkMuted;
   }
 
+  /* Section markers: small mono capitals, the one place tracking is kept. */
   .eyebrow {
-    @apply text-xs uppercase tracking-[0.18em] text-instrument;
+    @apply font-mono text-xs uppercase tracking-[0.08em] text-inkFaint;
   }
 
   /* The page's one container. Everything sits inside it. */

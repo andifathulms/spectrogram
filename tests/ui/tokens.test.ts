@@ -101,7 +101,8 @@ describe('palette contrast', () => {
     return (lighter + 0.05) / (darker + 0.05)
   }
 
-  const BACKGROUNDS = { plate: CANVAS.plate, surface: '#181C21' } as const
+  /** Every ground text is set on: the page, an instrument, a raised control. */
+  const BACKGROUNDS = { void: CANVAS.void, plate: CANVAS.plate, raised: CANVAS.raised } as const
 
   // Text-bearing foregrounds used against the two page/instrument backgrounds.
   const TEXT_FOREGROUNDS = {
@@ -110,6 +111,11 @@ describe('palette contrast', () => {
     inkFaint: CANVAS.inkFaint,
     instrument: CANVAS.instrument,
   } as const
+
+  // Primary actions are plate text on energyHigh: light through the plate.
+  it('plate text on an energyHigh button is at least 4.5:1', () => {
+    expect(contrast(CANVAS.plate, CANVAS.energyHigh)).toBeGreaterThanOrEqual(4.5)
+  })
 
   it.each(
     Object.entries(BACKGROUNDS).flatMap(([bgName, bg]) =>
@@ -128,10 +134,12 @@ describe('palette contrast', () => {
   // is a signal colour, not a text colour. It marks the clipping indicator's
   // edge and dot; the words beside it are ink.
   it.each([
+    ['instrument on void', CANVAS.instrument, BACKGROUNDS.void],
     ['instrument on plate', CANVAS.instrument, BACKGROUNDS.plate],
-    ['instrument on surface', CANVAS.instrument, BACKGROUNDS.surface],
+    ['instrument on raised', CANVAS.instrument, BACKGROUNDS.raised],
+    ['clip on void', CANVAS.clip, BACKGROUNDS.void],
     ['clip on plate', CANVAS.clip, BACKGROUNDS.plate],
-    ['clip on surface', CANVAS.clip, BACKGROUNDS.surface],
+    ['clip on raised', CANVAS.clip, BACKGROUNDS.raised],
   ] as const)('%s is at least 3:1', (_label, fg, bg) => {
     const ratio = contrast(fg, bg)
     // eslint-disable-next-line no-console

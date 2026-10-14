@@ -83,7 +83,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#14171A',
+  themeColor: '#0D0F12',
   width: 'device-width',
   initialScale: 1,
 }
@@ -91,7 +91,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang={DEFAULT_LOCALE} className={`${display.variable} ${sans.variable} ${mono.variable}`}>
-      <body className="min-h-screen bg-plate antialiased">{children}</body>
+      <body className="min-h-screen bg-void antialiased">{children}</body>
     </html>
   )
 }

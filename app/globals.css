@@ -13,7 +13,7 @@
 
   html,
   body {
-    background-color: theme('colors.plate');
+    background-color: theme('colors.void');
     color: theme('colors.ink');
   }
 
@@ -111,8 +111,13 @@
     @apply mx-auto w-full max-w-shell px-5 sm:px-7;
   }
 
+  /*
+   * An instrument, or a control that acts on one: glass on the ground. Prose
+   * never gets this frame — it sits on the ground, so the frame keeps meaning
+   * "this is something you look at or operate".
+   */
   .card {
-    @apply rounded-card border border-hairline bg-surface;
+    @apply rounded-card border border-hairline bg-plate shadow-glass;
   }
 }
 

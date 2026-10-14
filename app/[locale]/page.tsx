@@ -90,7 +90,7 @@ export default function HomePage({ params }: { params: { locale: string } }) {
       </section>
 
       {/* The lesson. Given the most room on the page, because it is the point. */}
-      <section className="mt-20 rounded-card border border-hairline bg-surface p-6 sm:mt-24 sm:p-10">
+      <section className="mt-20 rounded-card border border-hairline bg-plate p-6 sm:mt-24 sm:p-10">
         <h2 className="display-lg max-w-readable text-balance">{copy.homeTradeoffTitle}</h2>
         <p className="lede mt-5 max-w-readable">{copy.homeTradeoffBody}</p>
         <Link

@@ -8,10 +8,17 @@ import type { Config } from 'tailwindcss'
  * red. Those are fixed by the PRD and nothing may be added to them — an extra
  * hue in the ramp would be a lie about the data.
  *
- * The rest is chrome: page surfaces, hairlines and the three text tones the
- * interface is written in. They exist so the page around the instrument can be
- * built without inventing a colour at each call site, and every text tone here
- * clears 4.5:1 against the surface it is used on.
+ * The rest is chrome: the ground the page sits on, raised controls, hairlines
+ * and the three text tones the interface is written in. They exist so the page
+ * around the instrument can be built without inventing a colour at each call
+ * site, and every text tone here clears 4.5:1 against every ground it is used
+ * on (tests/ui/tokens.test.ts).
+ *
+ * The ground, `void`, is darker than `plate` on purpose. Instruments — the
+ * plate, the waveform, the spectrum, the controls that act on them — are
+ * framed as glass in `plate`; prose sits directly on the ground. The two used
+ * to differ by 1.05:1, so borders did all the separating and every block read
+ * as the same kind of box.
  */
 const config: Config = {
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
@@ -28,12 +35,12 @@ const config: Config = {
         clip: '#C4453A',
 
         // The page around it.
-        surface: '#181C21',
-        raised: '#1F252B',
-        hairline: '#242B32',
+        void: '#0D0F12',
+        raised: '#1A1F25',
+        hairline: '#252C34',
         ink: '#E6ECF2',
         inkMuted: '#A9B5C1',
-        inkFaint: '#7C8995',
+        inkFaint: '#8693A0',
       },
       fontFamily: {
         display: ['var(--font-display)', 'Georgia', 'serif'],
@@ -53,6 +60,13 @@ const config: Config = {
       },
       boxShadow: {
         card: 'inset 0 1px 0 0 rgb(255 255 255 / 0.03), 0 12px 32px -20px rgb(0 0 0 / 0.9)',
+        /*
+         * An instrument: lifted off the ground, with a faint amber light
+         * around it — as if from the picture. The one place the ramp's hue
+         * appears outside the data, and it never reaches 15% alpha.
+         */
+        glass:
+          'inset 0 1px 0 0 rgb(255 255 255 / 0.035), 0 40px 80px -48px rgb(0 0 0 / 0.95), 0 0 140px -40px rgb(201 123 36 / 0.13)',
       },
       keyframes: {
         pulseDot: {

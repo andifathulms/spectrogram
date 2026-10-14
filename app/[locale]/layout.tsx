@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { LOCALES, copyFor, isLocale } from '@/lib/i18n'
 import { SiteHeader } from '@/components/chrome/SiteHeader'
 import { SiteFooter } from '@/components/chrome/SiteFooter'
+import { TabBar } from '@/components/chrome/TabBar'
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }))
@@ -27,7 +28,8 @@ export default function LocaleLayout({
   const copy = copyFor(params.locale)
 
   return (
-    <div lang={params.locale} className="flex min-h-screen flex-col">
+    // Bottom padding on phones keeps the footer clear of the tab bar.
+    <div lang={params.locale} className="flex min-h-screen flex-col pb-[calc(4.25rem+env(safe-area-inset-bottom))] md:pb-0">
       {/* Keyboard users reach the plate without walking the nav every time. */}
       <a
         href="#content"
@@ -41,6 +43,7 @@ export default function LocaleLayout({
         {children}
       </main>
       <SiteFooter copy={copy} />
+      <TabBar locale={params.locale} copy={copy} />
     </div>
   )
 }

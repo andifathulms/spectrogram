@@ -35,6 +35,10 @@ export interface Copy {
   navProof: string
   /** The nav's accessible name, so it is not announced as the site title. */
   navLabel: string
+  /** Short labels for the phone's bottom tab bar. */
+  tabListen: string
+  tabBuild: string
+  tabProof: string
   skipToContent: string
   footerCredit: string
 
@@ -185,6 +189,7 @@ export interface Copy {
   quiet: string
   loud: string
   privacyBadge: string
+  privacyShort: string
   units: { hz: string; db: string; ms: string; s: string; samples: string }
 }
 
@@ -197,6 +202,9 @@ const en: Copy = {
   navBuild: 'Build a sound',
   navProof: 'Check the maths',
   navLabel: 'Main',
+  tabListen: 'See',
+  tabBuild: 'Build',
+  tabProof: 'Check',
   skipToContent: 'Skip to content',
   footerCredit:
     'Built as an explanation, not a product. The transform is written from scratch — Cooley-Tukey (1965), and Harris (1978) for the windows.',
@@ -415,6 +423,7 @@ const en: Copy = {
   quiet: 'quiet',
   loud: 'loud',
   privacyBadge: 'Private · no network',
+  privacyShort: 'Private',
   units: { hz: 'Hz', db: 'dB', ms: 'ms', s: 's', samples: 'samples' },
 }
 
@@ -427,6 +436,9 @@ const id: Copy = {
   navBuild: 'Susun nada',
   navProof: 'Periksa hitungannya',
   navLabel: 'Utama',
+  tabListen: 'Lihat',
+  tabBuild: 'Susun',
+  tabProof: 'Periksa',
   skipToContent: 'Lewati ke konten',
   footerCredit:
     'Dibuat sebagai penjelasan, bukan produk. Transform-nya ditulis dari nol — Cooley-Tukey (1965), dan Harris (1978) untuk window function.',
@@ -646,6 +658,7 @@ const id: Copy = {
   quiet: 'sunyi',
   loud: 'keras',
   privacyBadge: 'Privat · tanpa jaringan',
+  privacyShort: 'Privat',
   units: { hz: 'Hz', db: 'dB', ms: 'ms', s: 's', samples: 'sample' },
 }
 

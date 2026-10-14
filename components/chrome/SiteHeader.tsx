@@ -45,8 +45,9 @@ export function SiteHeader({ locale, copy }: Props) {
           <span className="font-display text-[1.375rem] leading-none text-ink">{copy.title}</span>
         </Link>
 
-        <nav aria-label={copy.navLabel} className="flex min-w-0 flex-1 items-center gap-3 sm:gap-5">
-          <div className="flex min-w-0 gap-0.5 overflow-x-auto rounded-full border border-hairline bg-void p-[3px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <nav aria-label={copy.navLabel} className="hidden min-w-0 flex-1 items-center gap-3 sm:gap-5 md:flex">
+          {/* From md up. On a phone the tab bar at the bottom carries the nav. */}
+          <div className="hidden min-w-0 gap-0.5 rounded-full border border-hairline bg-void p-[3px] md:flex">
             {instruments.map((link) => {
               const active = isActive(link.href)
               return (
@@ -71,13 +72,24 @@ export function SiteHeader({ locale, copy }: Props) {
           <Link
             href={proof}
             aria-current={isActive(proof) ? 'page' : undefined}
-            className={`hidden whitespace-nowrap text-sm font-medium transition-colors md:block ${
+            className={`whitespace-nowrap text-sm font-medium transition-colors ${
               isActive(proof) ? 'text-ink underline decoration-emulsion underline-offset-[6px]' : 'text-inkMuted hover:text-ink'
             }`}
           >
             {copy.navProof}
           </Link>
         </nav>
+
+        {/* Below md the nav is gone from here, so this spacer keeps the switch on the right. */}
+        <span className="flex-1 md:hidden" />
+
+        <span
+          className="flex shrink-0 items-center gap-1.5 rounded-full border border-hairline px-2.5 py-1 text-xs text-inkMuted md:hidden"
+          title={copy.homePrivacyBody}
+        >
+          <span className="block h-1.5 w-1.5 rounded-full bg-instrument" aria-hidden />
+          {copy.privacyShort}
+        </span>
 
         <span
           className="hidden shrink-0 items-center gap-1.5 rounded-full border border-hairline px-2.5 py-1 text-xs text-inkMuted lg:flex"

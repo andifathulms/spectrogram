@@ -11,6 +11,7 @@ import { startAudioContext, audioSupport } from '@/lib/audio/context'
 import { startCapture, type Capture } from '@/lib/audio/capture'
 import { play, type PlaybackHandle } from '@/lib/audio/playback'
 import { MIN_PLOT_HZ, useSpectrogram, type SourceMode } from '@/lib/hooks/useSpectrogram'
+import { useMediaQuery } from '@/lib/hooks/useMediaQuery'
 import * as fmt from '@/lib/ui/format'
 import { blurBars } from '@/lib/ui/annotations'
 import { THUMBNAIL } from '@/lib/render/thumbnailSpec'
@@ -218,12 +219,17 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
 
   const blur = blurBars(N, SIZES[0], SIZES[SIZES.length - 1])
 
+  // Below the rail breakpoint the instrument is pinned under the header and
+  // the controls scroll beneath it, so it is drawn shorter.
+  const compact = useMediaQuery('(max-width: 1023px)')
+
   /*
    * One instrument and a rail beside it. The waveform and the plate are fused
    * so the window bracket sits directly above the columns it produces, and
    * Detail sits next to the plate, so dragging it and watching the picture
-   * change happen in one glance. On a phone the order is source, instrument,
-   * Detail, fine-tune — the way a first visit runs.
+   * change happen in one glance. On a phone the instrument comes first and
+   * stays pinned under the header while the source, Detail and fine-tune
+   * scroll beneath it — the picture never leaves the screen as you change it.
    */
   return (
     <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_21rem]">
@@ -302,7 +308,7 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
 
       {/* The instrument: the wave, its analysed slice bracketed, and the picture that slice becomes. */}
       <section
-        className="overflow-hidden rounded-card border border-hairline bg-plate shadow-glass lg:sticky lg:top-20 lg:col-start-1 lg:row-span-3 lg:row-start-1"
+        className="sticky top-16 z-10 order-first overflow-hidden rounded-card border border-hairline bg-plate shadow-glass lg:top-20 lg:order-none lg:col-start-1 lg:row-span-3 lg:row-start-1"
         aria-label={copy.listenTitle}
       >
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline px-3 py-2.5">
@@ -324,7 +330,7 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
           fs={fs}
           windowStartSeconds={bracketAt}
           windowSeconds={N / fs}
-          height={80}
+          height={compact ? 48 : 80}
         />
 
         <div className="flex items-center border-y border-hairline px-3 py-1.5">
@@ -344,7 +350,7 @@ export function PlateWorkbench({ copy }: { copy: Copy }) {
             scan={mode === 'sample' ? scan : null}
             scrolling={mode === 'mic'}
             onCursor={setCursor}
-            height={420}
+            height={compact ? 220 : 420}
           />
 
           {/* What the cursor is over, on the plate itself. Annotation layer: cyan. */}

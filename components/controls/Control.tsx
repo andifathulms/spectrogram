@@ -60,22 +60,30 @@ interface SegmentedProps<T extends string> {
   ariaLabel: string
 }
 
-/** Radio group as a segmented control. Keyboard-operable by construction. */
+/**
+ * Radio group as a segmented control. Keyboard-operable by construction: the
+ * radios are real, visually hidden, and the pill they sit in shows their
+ * focus.
+ */
 export function Segmented<T extends string>({ options, value, onChange, ariaLabel }: SegmentedProps<T>) {
   const name = useId()
 
   return (
-    <div role="radiogroup" aria-label={ariaLabel} className="flex flex-wrap gap-1.5">
+    <div
+      role="radiogroup"
+      aria-label={ariaLabel}
+      className="inline-flex max-w-full flex-wrap gap-0.5 rounded-[1.25rem] border border-hairline bg-void p-[3px]"
+    >
       {options.map((option) => {
         const active = option.value === value
         return (
           <label
             key={option.value}
             title={option.title}
-            className={`cursor-pointer border px-2.5 py-1 text-xs ${
+            className={`cursor-pointer rounded-full px-3 py-1.5 text-[0.8125rem] font-medium leading-tight transition-colors has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-instrument ${
               active
-                ? 'border-instrument text-instrument'
-                : 'border-emulsion text-inkMuted hover:text-energyHigh'
+                ? 'bg-raised text-ink shadow-[inset_0_0_0_1px_theme(colors.emulsion)]'
+                : 'text-inkFaint hover:text-ink'
             }`}
           >
             <input
@@ -118,10 +126,14 @@ export function Slider({
   id,
   'aria-describedby': ariaDescribedBy,
 }: SliderProps) {
+  // How far along the track the thumb is, for the filled part of the track.
+  const fill = max > min ? ((value - min) / (max - min)) * 100 : 0
+
   return (
     <div>
       <input
         type="range"
+        style={{ '--fill': `${fill}%` } as React.CSSProperties}
         id={id}
         min={min}
         max={max}
@@ -132,7 +144,7 @@ export function Slider({
         onChange={(event) => onChange(Number(event.target.value))}
       />
       {ticks !== undefined && (
-        <div className="tabular flex justify-between text-[10px] text-inkFaint">
+        <div className="flex justify-between text-xs text-inkFaint">
           {ticks.map((tick) => (
             <span key={tick}>{tick}</span>
           ))}
@@ -142,6 +154,11 @@ export function Slider({
   )
 }
 
+/**
+ * One button system. Primary is light through the plate — energyHigh with
+ * plate text — so instrument cyan is left to mean "a measurement" and never
+ * "press here". Everything else is a quiet outline. Both are pills.
+ */
 export function Button({
   children,
   onClick,
@@ -155,15 +172,15 @@ export function Button({
 }) {
   const styles =
     variant === 'primary'
-      ? 'border-instrument text-instrument hover:bg-instrument hover:text-plate'
-      : 'border-emulsion text-inkMuted hover:border-instrument hover:text-instrument'
+      ? 'border-energyHigh bg-energyHigh text-plate hover:bg-ink hover:border-ink'
+      : 'border-hairline text-ink hover:border-inkFaint'
 
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`border px-3.5 py-1.5 text-sm disabled:cursor-not-allowed disabled:opacity-40 ${styles}`}
+      className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${styles}`}
     >
       {children}
     </button>
